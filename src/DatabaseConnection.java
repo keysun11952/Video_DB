@@ -22,15 +22,16 @@ public class DatabaseConnection {
 				.replace("${dbName}",databaseName)
 				.replace("${user}",user)
 				.replace("{${pass}}",pass);
-	     try {
+		try {
+			System.out.println(connectionUrl);
 			this.connection = DriverManager.getConnection(connectionUrl);
 		} catch (SQLException e) {
+			e.printStackTrace();			
 			return false;
 		} 
 		return connection!=null;
 	}
 	
-
 	public Connection getConnection() {
 		return this.connection;
 	}

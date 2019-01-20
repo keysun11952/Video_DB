@@ -17,6 +17,9 @@ public class Application {
 				try {
 					Application window = new Application();
 					window.frame.setVisible(true);
+					DatabaseConnection con = new DatabaseConnection("golem.csse.rose-hulman.edu", "SodaBasewangj1429");
+					boolean r = con.connect("SodaBaseUserwangj1429", "Password123");
+					System.out.println(r);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
