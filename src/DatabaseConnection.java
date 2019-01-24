@@ -11,31 +11,39 @@ public class DatabaseConnection {
 
 	private String databaseName;
 	private String serverName;
+	private static DatabaseConnection dbc = null;
 
-	public DatabaseConnection(String serverName, String databaseName) {
-		this.serverName = serverName;
-		this.databaseName = databaseName;
+	private DatabaseConnection() {
+		this.serverName ="golem.csse.rose-hulman.edu";
+		this.databaseName =  "SodaBasewangj1429";
+	}
+
+	public static DatabaseConnection getInstance() {
+		if (dbc == null) {
+			dbc = new DatabaseConnection();
+		}
+		return dbc;
+
 	}
 
 	public boolean connect(String user, String pass) {
-		String connectionUrl = SampleURL.replace("${dbServer}",serverName)
-				.replace("${dbName}",databaseName)
-				.replace("${user}",user)
-				.replace("{${pass}}",pass);
+		System.out.println(serverName);
+		String connectionUrl = SampleURL.replace("${dbServer}", serverName).replace("${dbName}", databaseName)
+				.replace("${user}", user).replace("{${pass}}", pass);
 		try {
 			System.out.println(connectionUrl);
 			this.connection = DriverManager.getConnection(connectionUrl);
 		} catch (SQLException e) {
-			e.printStackTrace();			
+			e.printStackTrace();
 			return false;
-		} 
-		return connection!=null;
+		}
+		return connection != null;
 	}
-	
+
 	public Connection getConnection() {
 		return this.connection;
 	}
-	
+
 	public void closeConnection() {
 		try {
 			connection.close();

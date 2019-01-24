@@ -21,9 +21,17 @@ public class UserService {
 	private static final Base64.Encoder enc = Base64.getEncoder();
 	private static final Base64.Decoder dec = Base64.getDecoder();
 	private DatabaseConnection dbService = null;
+	private static UserService us;
 
-	public UserService(DatabaseConnection dbService) {
+	private UserService(DatabaseConnection dbService) {
 		this.dbService = dbService;
+	}
+	
+	public static UserService getInstance() {
+		if(us==null) {
+			us=new UserService(DatabaseConnection.getInstance());
+		}
+		return us;
 	}
 
 	public boolean useApplicationLogins() {
