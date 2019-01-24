@@ -15,7 +15,7 @@ public class DatabaseConnection {
 
 	private DatabaseConnection() {
 		this.serverName ="golem.csse.rose-hulman.edu";
-		this.databaseName =  "SodaBasewangj1429";
+		this.databaseName =  "Video_DB";
 	}
 
 	public static DatabaseConnection getInstance() {

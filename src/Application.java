@@ -9,6 +9,8 @@ import java.awt.Panel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.sun.org.apache.regexp.internal.RE;
+
 import sun.security.util.Password;
 
 import javax.swing.JButton;
@@ -36,8 +38,7 @@ public class Application {
 					Application window = new Application();
 					window.frame.setVisible(true);
 					DatabaseConnection con = DatabaseConnection.getInstance();
-					boolean r = con.connect("SodaBaseUserwangj1429", "Password123");
-					System.out.println(r);
+					boolean r = con.connect("wangc6", "Katisi0325");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -62,28 +63,29 @@ public class Application {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JPanel panel_1 = new JPanel();
-		panel_1.setLayout(null);
-		panel_1.setBounds(0, 0, 642, 437);
-		frame.getContentPane().add(panel_1);
+		JPanel RegisterPanel = new JPanel();
+		RegisterPanel.setVisible(false);
+		RegisterPanel.setLayout(null);
+		RegisterPanel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(RegisterPanel);
 		
 		JLabel lblUsername = new JLabel("UserName");
 		lblUsername.setBounds(111, 133, 63, 16);
-		panel_1.add(lblUsername);
+		RegisterPanel.add(lblUsername);
 		
 		JLabel lblPassword_1 = new JLabel("Password");
 		lblPassword_1.setBounds(111, 218, 55, 16);
-		panel_1.add(lblPassword_1);
+		RegisterPanel.add(lblPassword_1);
 		
 		UserName_1 = new JTextField();
 		UserName_1.setColumns(10);
 		UserName_1.setBounds(209, 130, 116, 22);
-		panel_1.add(UserName_1);
+		RegisterPanel.add(UserName_1);
 		
 		Password_1 = new JTextField();
 		Password_1.setColumns(10);
 		Password_1.setBounds(209, 215, 116, 22);
-		panel_1.add(Password_1);
+		RegisterPanel.add(Password_1);
 		
 		JButton button = new JButton("Register");
 		button.addActionListener(new ActionListener() {
@@ -91,57 +93,58 @@ public class Application {
 				JOptionPane.showMessageDialog(frame, us.register(UserName_1.getText(), Password_1.getText(), DOB.getText(), Email.getText()));
 			}
 		});
-		button.setBounds(420, 129, 79, 25);
-		panel_1.add(button);
+		button.setBounds(420, 129, 95, 25);
+		RegisterPanel.add(button);
 		
 		JLabel lblDob = new JLabel("DOB");
 		lblDob.setBounds(111, 279, 63, 16);
-		panel_1.add(lblDob);
+		RegisterPanel.add(lblDob);
 		
 		JLabel lblEmail = new JLabel("Email");
 		lblEmail.setBounds(111, 364, 55, 16);
-		panel_1.add(lblEmail);
+		RegisterPanel.add(lblEmail);
+		
 		
 		DOB = new JTextField();
 		DOB.setColumns(10);
 		DOB.setBounds(209, 276, 116, 22);
-		panel_1.add(DOB);
+		RegisterPanel.add(DOB);
 		
 		Email = new JTextField();
 		Email.setColumns(10);
 		Email.setBounds(209, 361, 116, 22);
-		panel_1.add(Email);
+		RegisterPanel.add(Email);
 
-		JPanel panel = new JPanel();
-		panel.setBounds(0, 0, 642, 437);
-		frame.getContentPane().add(panel);
-		panel.setLayout(null);
+		JPanel LoginPanel = new JPanel();
+		LoginPanel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(LoginPanel);
+		LoginPanel.setLayout(null);
 
 		LUserName = new JTextField();
 		LUserName.setBounds(209, 130, 116, 22);
-		panel.add(LUserName);
+		LoginPanel.add(LUserName);
 		LUserName.setColumns(10);
 
 		JLabel lblUserName = new JLabel("User Name");
 		lblUserName.setBounds(111, 133, 63, 16);
-		panel.add(lblUserName);
+		LoginPanel.add(lblUserName);
 		
 				LPassword = new JTextField();
 				LPassword.setBounds(209, 215, 116, 22);
-				panel.add(LPassword);
+				LoginPanel.add(LPassword);
 				LPassword.setColumns(10);
 
 		JLabel lblPassword = new JLabel("Password");
 		lblPassword.setBounds(111, 218, 55, 16);
-		panel.add(lblPassword);
+		LoginPanel.add(lblPassword);
 
 		JButton btnRegister = new JButton("Register");
 		btnRegister.setBounds(420, 129, 79, 25);
-		panel.add(btnRegister);
+		LoginPanel.add(btnRegister);
 
 		JButton btnLogin = new JButton("Login");
 		btnLogin.setBounds(420, 214, 79, 25);
-		panel.add(btnLogin);
+		LoginPanel.add(btnLogin);
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println(us.login(LUserName.getText(), LPassword.getText()));
@@ -149,6 +152,9 @@ public class Application {
 		});
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				RegisterPanel.setVisible(true);
+				LoginPanel.setVisible(false);
+
 			}
 		});
 	}
