@@ -15,6 +15,10 @@ import sun.security.util.Password;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Scanner;
 import java.awt.event.ActionEvent;
 
 public class Application {
@@ -27,7 +31,8 @@ public class Application {
 	private JTextField Password_1;
 	private JTextField DOB;
 	private JTextField Email;
-
+	private static String userName;
+	private static String password;
 	/**
 	 * Launch the application.
 	 */
@@ -38,7 +43,7 @@ public class Application {
 					Application window = new Application();
 					window.frame.setVisible(true);
 					DatabaseConnection con = DatabaseConnection.getInstance();
-					boolean r = con.connect("wangc6", "Katisi0325");
+					boolean r = con.connect(userName, password);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -52,6 +57,20 @@ public class Application {
 	public Application() {
 		initialize();
 		us = UserService.getInstance();
+		setUp();
+	}
+	
+	private void setUp(){
+		File file = new File("src\\setting");
+		Scanner scanner = null;
+		try {
+			scanner = new Scanner(file);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		this.userName=scanner.nextLine();
+		this.password=scanner.next();
+		scanner.close();
 	}
 
 	/**
