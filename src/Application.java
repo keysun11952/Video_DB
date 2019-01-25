@@ -18,10 +18,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.Scanner;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
@@ -41,6 +43,7 @@ public class Application {
 	private JPasswordField LPassword;
 	private String username = null;
 	private JTable RecentVideos;
+	private JTextField newEmail;
 
 	/**
 	 * Launch the application.
@@ -110,7 +113,6 @@ public class Application {
 		RecentVideos = new JTable();
 		RecentVideos.setBounds(79, 98, 483, 96);
 		MainPanel.add(RecentVideos);
-		MainPanel.setVisible(false);
 		
 		JPanel LoginPanel = new JPanel();
 		LoginPanel.setBounds(0, 0, 642, 437);
@@ -236,8 +238,36 @@ public class Application {
 		btnCancel.setBounds(420, 191, 95, 25);
 		RegisterPanel.add(btnCancel);
 
+		newEmail = new JTextField();
+		newEmail.setBounds(335, 400, 168, 24);
+		MainPanel.add(newEmail);
+		newEmail.setColumns(10);
+		MainPanel.setVisible(false);
+		
+		JButton btnChangeEmail = new JButton("Change Email");
+		btnChangeEmail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Connection conn = DatabaseConnection.getConnection();
+				try {
+					CallableStatement stmt = conn.prepareCall("{? = call changeEmail(?,?)}");
+					stmt.setString(2, username);
+					stmt.setString(3, newEmail.getText());
+					stmt.registerOutParameter(1, Types.INTEGER);
+					stmt.execute();
+				    int re = stmt.getInt(1);
+				    if (re == 0)
+				    	JOptionPane.showMessageDialog(frame, "Email changed");
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnChangeEmail.setBounds(515, 399, 115, 25);
+		MainPanel.add(btnChangeEmail);
+		
 		// initialize panel
 		LoginPanel.setVisible(true);
 		RegisterPanel.setVisible(false);
+		MainPanel.setVisible(false);
 	}
 }
