@@ -42,7 +42,7 @@ public class Application {
 	private JPasswordField passwordField;
 	private JPasswordField LPassword;
 	private String username = null;
-	private int uid =-1;
+	private int uid = -1;
 	private JTable RecentVideos;
 	private JTextField newEmail;
 	private JTable UserVideo;
@@ -56,9 +56,9 @@ public class Application {
 			public void run() {
 				try {
 					Application window = new Application();
-					window.frame.setVisible(true);
 					DatabaseConnection con = DatabaseConnection.getInstance();
 					boolean r = con.connect(USERNAME, PASSWORD);
+					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -70,9 +70,9 @@ public class Application {
 	 * Create the application.
 	 */
 	public Application() {
-		initialize();
-		us = UserService.getInstance();
 		setUp();
+		us = UserService.getInstance();
+		initialize();
 	}
 
 	private void setUp() {
@@ -88,45 +88,13 @@ public class Application {
 		scanner.close();
 	}
 
-	
-//	private void Login(String LUserName, String LPassword){
-//		
-//	}
-	
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 660, 484);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
-
-		JPanel RegisterPanel = new JPanel();
-		RegisterPanel.setVisible(false);
-
-		JPanel MainPanel = new JPanel();
-		MainPanel.setBounds(0, 0, 642, 437);
-		frame.getContentPane().add(MainPanel);
-		MainPanel.setLayout(null);
-
-		JLabel lblRecentVideos = new JLabel("Recent Videos");
-		lblRecentVideos.setBounds(56, 34, 116, 30);
-		MainPanel.add(lblRecentVideos);
-
-		JLabel lblHello = new JLabel();
-		lblHello.setBounds(515, 13, 115, 26);
-		MainPanel.add(lblHello);
-		
-		RecentVideos = new JTable();
-		RecentVideos.setBounds(79, 79, 483, 96);
-		MainPanel.add(RecentVideos);
-		
+	private void loadLoginPanel() {
 		JPanel LoginPanel = new JPanel();
 		LoginPanel.setBounds(0, 0, 642, 437);
 		frame.getContentPane().add(LoginPanel);
 		LoginPanel.setLayout(null);
 
+		LoginPanel.setVisible(true);
 		LUserName = new JTextField();
 		LUserName.setBounds(209, 130, 116, 22);
 		LoginPanel.add(LUserName);
@@ -152,56 +120,31 @@ public class Application {
 		LPassword.setEchoChar('*');
 		LPassword.setBounds(209, 215, 116, 22);
 		LoginPanel.add(LPassword);
-		
-		
-	
+
+		btnRegister.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				loadRegisterPanel();
+				frame.repaint();
+			}
+		});
+
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (us.login(LUserName.getText(), new String(LPassword.getPassword()))) {
 					username = LUserName.getText();
-					MainPanel.setVisible(true);
-					LoginPanel.setVisible(false);
-					lblHello.setText("Hello, " + username);
-								
-					
-					ResultSet rs = null;		
-					Connection conn = DatabaseConnection.getConnection();
-					CallableStatement stmt = null;
-					try {
-						Statement st = conn.createStatement();
-						String query = "SELECT * From LastUploadedVideosView";
-					    rs = st.executeQuery(query);
-					    RecentVideos.setModel(DbUtils.resultSetToTableModel(rs)); 
-						String query3 = "SELECT dbo.getIdByUName('"+username+"')";
-						Statement st3 = conn.createStatement();
-						ResultSet rs3 = null;		
-					    rs3 = st3.executeQuery(query3);
-					    rs3.next();
-					    uid=rs3.getInt(1);
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					}
-					try {
-						Statement st2 = conn.createStatement();
-						String query2 = "SELECT * From getVideoByUser('"+username+"')";
-						ResultSet rs2 = null;		
-					    rs2 = st2.executeQuery(query2);
-					    UserVideo.setModel(DbUtils.resultSetToTableModel(rs2)); 
-					} catch (SQLException e2) {
-						e2.printStackTrace();
-					}
-					
+					frame.getContentPane().removeAll();
+					loadMainPanel();
+					frame.repaint();
 				}
 			}
 		});
+	}
 
-		btnRegister.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				RegisterPanel.setVisible(true);
-				LoginPanel.setVisible(false);
+	private void loadRegisterPanel() {
+		JPanel RegisterPanel = new JPanel();
+		RegisterPanel.setVisible(true);
 
-			}
-		});
 		RegisterPanel.setLayout(null);
 		RegisterPanel.setBounds(0, 0, 642, 437);
 		frame.getContentPane().add(RegisterPanel);
@@ -218,20 +161,21 @@ public class Application {
 		UserName_1.setColumns(10);
 		UserName_1.setBounds(209, 110, 116, 22);
 		RegisterPanel.add(UserName_1);
-
 		JButton btnRegister_1 = new JButton("Register");
 		btnRegister_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (us.register(UserName_1.getText(), new String(passwordField.getPassword()), DOB.getText(),
 						Email.getText())) {
 					JOptionPane.showMessageDialog(frame, "Registration succeed");
-					RegisterPanel.setVisible(false);
-					LoginPanel.setVisible(true);
+					frame.getContentPane().removeAll();
+					loadLoginPanel();
+					frame.repaint();
 				} else {
 					JOptionPane.showMessageDialog(frame, "Registration failed");
 				}
 			}
 		});
+
 		btnRegister_1.setBounds(420, 109, 95, 25);
 		RegisterPanel.add(btnRegister_1);
 
@@ -261,19 +205,110 @@ public class Application {
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				RegisterPanel.setVisible(false);
-				LoginPanel.setVisible(true);
+				frame.getContentPane().removeAll();
+				loadLoginPanel();
+				frame.repaint();
 			}
 		});
 		btnCancel.setBounds(420, 191, 95, 25);
 		RegisterPanel.add(btnCancel);
 
+	}
+
+	private void loadMainPanel() {
+		JPanel MainPanel = new JPanel();
+		MainPanel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(MainPanel);
+		MainPanel.setLayout(null);
+
+		MainPanel.setVisible(true);
+
+		JLabel lblRecentVideos = new JLabel("Recent Videos");
+		lblRecentVideos.setBounds(56, 34, 116, 30);
+		MainPanel.add(lblRecentVideos);
+
+		JLabel lblHello = new JLabel();
+		lblHello.setBounds(515, 13, 115, 26);
+		MainPanel.add(lblHello);
+		lblHello.setText("Hello, " + username);
+
+		RecentVideos = new JTable();
+		RecentVideos.setBounds(79, 79, 483, 96);
+		MainPanel.add(RecentVideos);
+
 		newEmail = new JTextField();
 		newEmail.setBounds(335, 400, 168, 24);
 		MainPanel.add(newEmail);
 		newEmail.setColumns(10);
-		MainPanel.setVisible(false);
-		
+
+		UserVideo = new JTable();
+		UserVideo.setBounds(82, 237, 480, 128);
+		MainPanel.add(UserVideo);
+
+		JLabel lblPersonalVideos = new JLabel("Personal Videos");
+		lblPersonalVideos.setBounds(56, 188, 128, 16);
+		MainPanel.add(lblPersonalVideos);
+
+		deletedID = new JTextField();
+		deletedID.setBounds(23, 401, 116, 22);
+		MainPanel.add(deletedID);
+		deletedID.setColumns(10);
+
+		JButton btnNewButton = new JButton("Delete Video by ID");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int vid = new Integer(deletedID.getText());
+				try {
+					CallableStatement cs = DatabaseConnection.getConnection()
+							.prepareCall("{? = call dbo.deleteVideo(?)}");
+					cs.setInt(2, vid);
+					cs.registerOutParameter(1, Types.INTEGER);
+					cs.execute();
+					int returnValue = cs.getInt(1);
+					if (returnValue == 0) {
+						JOptionPane.showMessageDialog(frame, "Video deleted successfully");
+						frame.getContentPane().removeAll();
+						loadMainPanel();
+						frame.repaint();
+					} else {
+						JOptionPane.showMessageDialog(frame, "Action failed");
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+		btnNewButton.setBounds(154, 400, 156, 25);
+		MainPanel.add(btnNewButton);
+
+		ResultSet rs = null;
+		Connection conn = DatabaseConnection.getConnection();
+		CallableStatement stmt = null;
+		try {
+			Statement st = conn.createStatement();
+			String query = "SELECT * From LastUploadedVideosView";
+			rs = st.executeQuery(query);
+			RecentVideos.setModel(DbUtils.resultSetToTableModel(rs));
+			String query3 = "SELECT dbo.getIdByUName('" + username + "')";
+			Statement st3 = conn.createStatement();
+			ResultSet rs3 = null;
+			rs3 = st3.executeQuery(query3);
+			rs3.next();
+			uid = rs3.getInt(1);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			Statement st2 = conn.createStatement();
+			String query2 = "SELECT * From getVideoByUser('" + username + "')";
+			ResultSet rs2 = null;
+			rs2 = st2.executeQuery(query2);
+			UserVideo.setModel(DbUtils.resultSetToTableModel(rs2));
+		} catch (SQLException e2) {
+			e2.printStackTrace();
+		}
+
 		JButton btnChangeEmail = new JButton("Change Email");
 		btnChangeEmail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -284,9 +319,9 @@ public class Application {
 					stmt.setString(3, newEmail.getText());
 					stmt.registerOutParameter(1, Types.INTEGER);
 					stmt.execute();
-				    int re = stmt.getInt(1);
-				    if (re == 0)
-				    	JOptionPane.showMessageDialog(frame, "Email changed");
+					int re = stmt.getInt(1);
+					if (re == 0)
+						JOptionPane.showMessageDialog(frame, "Email changed");
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
@@ -294,48 +329,17 @@ public class Application {
 		});
 		btnChangeEmail.setBounds(515, 399, 115, 25);
 		MainPanel.add(btnChangeEmail);
-		
-		UserVideo = new JTable();
-		UserVideo.setBounds(82, 237, 480, 128);
-		MainPanel.add(UserVideo);
-		
-		JLabel lblPersonalVideos = new JLabel("Personal Videos");
-		lblPersonalVideos.setBounds(56, 188, 128, 16);
-		MainPanel.add(lblPersonalVideos);
-		
-		deletedID = new JTextField();
-		deletedID.setBounds(23, 401, 116, 22);
-		MainPanel.add(deletedID);
-		deletedID.setColumns(10);
-		
-		JButton btnNewButton = new JButton("Delete Video by ID");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				int vid = new Integer(deletedID.getText());
-				try {
-					CallableStatement cs = DatabaseConnection.getConnection().prepareCall("{? = call dbo.deleteVideo(?)}");
-					cs.setInt(2, vid);
-					cs.registerOutParameter(1, Types.INTEGER);
-					cs.execute();
-					int returnValue = cs.getInt(1);
-					if(returnValue == 0){
-						JOptionPane.showMessageDialog(frame, "Video deleted successfully");
-						btnLogin.setAction(null);
-					}else{
-						JOptionPane.showMessageDialog(frame, "Action failed");
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				
-			}
-		});
-		btnNewButton.setBounds(154, 400, 156, 25);
-		MainPanel.add(btnNewButton);
-		
-		// initialize panel
-		LoginPanel.setVisible(true);
-		RegisterPanel.setVisible(false);
-		MainPanel.setVisible(false);
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 660, 484);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+
+		loadLoginPanel();
 	}
 }
