@@ -18,9 +18,14 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
+import javax.swing.JTable;
 
 public class Application {
 
@@ -35,6 +40,7 @@ public class Application {
 	private JPasswordField passwordField;
 	private JPasswordField LPassword;
 	private String username = null;
+	private JTable RecentVideos;
 
 	/**
 	 * Launch the application.
@@ -88,16 +94,29 @@ public class Application {
 		JPanel RegisterPanel = new JPanel();
 		RegisterPanel.setVisible(false);
 
+		JPanel MainPanel = new JPanel();
+		MainPanel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(MainPanel);
+		MainPanel.setLayout(null);
+
+		JLabel lblRecentVideos = new JLabel("Recent Videos");
+		lblRecentVideos.setBounds(56, 51, 116, 30);
+		MainPanel.add(lblRecentVideos);
+
+		JLabel lblHello = new JLabel();
+		lblHello.setBounds(515, 13, 115, 26);
+		MainPanel.add(lblHello);
+		
+		RecentVideos = new JTable();
+		RecentVideos.setBounds(79, 98, 483, 96);
+		MainPanel.add(RecentVideos);
+		MainPanel.setVisible(false);
+		
 		JPanel LoginPanel = new JPanel();
 		LoginPanel.setBounds(0, 0, 642, 437);
 		frame.getContentPane().add(LoginPanel);
 		LoginPanel.setLayout(null);
 
-		JPanel MainPanel = new JPanel();
-		MainPanel.setBounds(0, 0, 642, 437);
-		frame.getContentPane().add(MainPanel);
-		MainPanel.setLayout(null);
-		
 		LUserName = new JTextField();
 		LUserName.setBounds(209, 130, 116, 22);
 		LoginPanel.add(LUserName);
@@ -129,6 +148,17 @@ public class Application {
 					username = LUserName.getText();
 					MainPanel.setVisible(true);
 					LoginPanel.setVisible(false);
+					lblHello.setText("Hello, " + username);
+					ResultSet rs = null;
+					Connection conn = DatabaseConnection.getConnection();
+					try {
+						Statement st = conn.createStatement();
+						String query = "SELECT * From LastUploadedVideosView";
+					    rs = st.executeQuery(query);
+					    RecentVideos.setModel(DbUtils.resultSetToTableModel(rs)); 
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -206,13 +236,8 @@ public class Application {
 		btnCancel.setBounds(420, 191, 95, 25);
 		RegisterPanel.add(btnCancel);
 
-		JLabel lblRecentVideos = new JLabel("Recent Videos");
-		lblRecentVideos.setBounds(56, 51, 116, 30);
-		MainPanel.add(lblRecentVideos);
-		
 		// initialize panel
 		LoginPanel.setVisible(true);
 		RegisterPanel.setVisible(false);
-		MainPanel.setVisible(false);
 	}
 }

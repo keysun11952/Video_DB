@@ -7,7 +7,7 @@ public class DatabaseConnection {
 
 	private final String SampleURL = "jdbc:sqlserver://${dbServer};databaseName=${dbName};user=${user};password={${pass}}";
 
-	private Connection connection = null;
+	private static Connection connection = null;
 
 	private String databaseName;
 	private String serverName;
@@ -38,8 +38,8 @@ public class DatabaseConnection {
 		return connection != null;
 	}
 
-	public Connection getConnection() {
-		return this.connection;
+	public static Connection getConnection() {
+		return connection;
 	}
 
 	public void closeConnection() {
