@@ -42,8 +42,11 @@ public class Application {
 	private JPasswordField passwordField;
 	private JPasswordField LPassword;
 	private String username = null;
+	private int uid =-1;
 	private JTable RecentVideos;
 	private JTextField newEmail;
+	private JTable UserVideo;
+	private JTextField deletedID;
 
 	/**
 	 * Launch the application.
@@ -85,6 +88,11 @@ public class Application {
 		scanner.close();
 	}
 
+	
+//	private void Login(String LUserName, String LPassword){
+//		
+//	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -103,7 +111,7 @@ public class Application {
 		MainPanel.setLayout(null);
 
 		JLabel lblRecentVideos = new JLabel("Recent Videos");
-		lblRecentVideos.setBounds(56, 51, 116, 30);
+		lblRecentVideos.setBounds(56, 34, 116, 30);
 		MainPanel.add(lblRecentVideos);
 
 		JLabel lblHello = new JLabel();
@@ -111,7 +119,7 @@ public class Application {
 		MainPanel.add(lblHello);
 		
 		RecentVideos = new JTable();
-		RecentVideos.setBounds(79, 98, 483, 96);
+		RecentVideos.setBounds(79, 79, 483, 96);
 		MainPanel.add(RecentVideos);
 		
 		JPanel LoginPanel = new JPanel();
@@ -144,6 +152,9 @@ public class Application {
 		LPassword.setEchoChar('*');
 		LPassword.setBounds(209, 215, 116, 22);
 		LoginPanel.add(LPassword);
+		
+		
+	
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (us.login(LUserName.getText(), new String(LPassword.getPassword()))) {
@@ -151,16 +162,35 @@ public class Application {
 					MainPanel.setVisible(true);
 					LoginPanel.setVisible(false);
 					lblHello.setText("Hello, " + username);
-					ResultSet rs = null;
+								
+					
+					ResultSet rs = null;		
 					Connection conn = DatabaseConnection.getConnection();
+					CallableStatement stmt = null;
 					try {
 						Statement st = conn.createStatement();
 						String query = "SELECT * From LastUploadedVideosView";
 					    rs = st.executeQuery(query);
 					    RecentVideos.setModel(DbUtils.resultSetToTableModel(rs)); 
+						String query3 = "SELECT dbo.getIdByUName('"+username+"')";
+						Statement st3 = conn.createStatement();
+						ResultSet rs3 = null;		
+					    rs3 = st3.executeQuery(query3);
+					    rs3.next();
+					    uid=rs3.getInt(1);
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
+					try {
+						Statement st2 = conn.createStatement();
+						String query2 = "SELECT * From getVideoByUser('"+username+"')";
+						ResultSet rs2 = null;		
+					    rs2 = st2.executeQuery(query2);
+					    UserVideo.setModel(DbUtils.resultSetToTableModel(rs2)); 
+					} catch (SQLException e2) {
+						e2.printStackTrace();
+					}
+					
 				}
 			}
 		});
@@ -264,6 +294,44 @@ public class Application {
 		});
 		btnChangeEmail.setBounds(515, 399, 115, 25);
 		MainPanel.add(btnChangeEmail);
+		
+		UserVideo = new JTable();
+		UserVideo.setBounds(82, 237, 480, 128);
+		MainPanel.add(UserVideo);
+		
+		JLabel lblPersonalVideos = new JLabel("Personal Videos");
+		lblPersonalVideos.setBounds(56, 188, 128, 16);
+		MainPanel.add(lblPersonalVideos);
+		
+		deletedID = new JTextField();
+		deletedID.setBounds(23, 401, 116, 22);
+		MainPanel.add(deletedID);
+		deletedID.setColumns(10);
+		
+		JButton btnNewButton = new JButton("Delete Video by ID");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int vid = new Integer(deletedID.getText());
+				try {
+					CallableStatement cs = DatabaseConnection.getConnection().prepareCall("{? = call dbo.deleteVideo(?)}");
+					cs.setInt(2, vid);
+					cs.registerOutParameter(1, Types.INTEGER);
+					cs.execute();
+					int returnValue = cs.getInt(1);
+					if(returnValue == 0){
+						JOptionPane.showMessageDialog(frame, "Video deleted successfully");
+						btnLogin.setAction(null);
+					}else{
+						JOptionPane.showMessageDialog(frame, "Action failed");
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		btnNewButton.setBounds(154, 400, 156, 25);
+		MainPanel.add(btnNewButton);
 		
 		// initialize panel
 		LoginPanel.setVisible(true);
