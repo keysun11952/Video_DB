@@ -56,7 +56,6 @@ public class UserService {
 		
 			String result = this.hashPassword(salt, password);
 			if(result.equals(hash)){
-				System.out.println("login");
 				return true;
 			} else {
 				JOptionPane.showMessageDialog(null,"Login Failed");
@@ -78,7 +77,6 @@ public class UserService {
 			register.setString(5, dob);
 			register.setString(6, email);
 			register.registerOutParameter(1, Types.INTEGER);
-			System.out.println("k");
 			register.execute();
 		
 			int returnValue = register.getInt(1);

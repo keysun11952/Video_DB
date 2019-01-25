@@ -14,8 +14,8 @@ public class DatabaseConnection {
 	private static DatabaseConnection dbc = null;
 
 	private DatabaseConnection() {
-		this.serverName ="golem.csse.rose-hulman.edu";
-		this.databaseName =  "Video_DB";
+		this.serverName = "golem.csse.rose-hulman.edu";
+		this.databaseName = "Video_DB";
 	}
 
 	public static DatabaseConnection getInstance() {
@@ -27,11 +27,9 @@ public class DatabaseConnection {
 	}
 
 	public boolean connect(String user, String pass) {
-		System.out.println(serverName);
 		String connectionUrl = SampleURL.replace("${dbServer}", serverName).replace("${dbName}", databaseName)
 				.replace("${user}", user).replace("{${pass}}", pass);
 		try {
-			System.out.println(connectionUrl);
 			this.connection = DriverManager.getConnection(connectionUrl);
 		} catch (SQLException e) {
 			e.printStackTrace();
