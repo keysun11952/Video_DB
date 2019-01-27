@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -28,6 +29,7 @@ import java.util.Scanner;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 import javax.swing.JTable;
+import java.awt.Font;
 
 public class Application {
 
@@ -89,6 +91,7 @@ public class Application {
 	}
 
 	private void loadLoginPanel() {
+
 		JPanel LoginPanel = new JPanel();
 		LoginPanel.setBounds(0, 0, 642, 437);
 		frame.getContentPane().add(LoginPanel);
@@ -142,6 +145,7 @@ public class Application {
 	}
 
 	private void loadRegisterPanel() {
+
 		JPanel RegisterPanel = new JPanel();
 		RegisterPanel.setVisible(true);
 
@@ -216,6 +220,7 @@ public class Application {
 	}
 
 	private void loadMainPanel() {
+
 		JPanel MainPanel = new JPanel();
 		MainPanel.setBounds(0, 0, 642, 437);
 		frame.getContentPane().add(MainPanel);
@@ -224,63 +229,36 @@ public class Application {
 		MainPanel.setVisible(true);
 
 		JLabel lblRecentVideos = new JLabel("Recent Videos");
-		lblRecentVideos.setBounds(56, 34, 116, 30);
+		lblRecentVideos.setBounds(56, 47, 116, 30);
 		MainPanel.add(lblRecentVideos);
 
 		JLabel lblHello = new JLabel();
-		lblHello.setBounds(515, 13, 115, 26);
+		lblHello.setBounds(335, 24, 168, 26);
 		MainPanel.add(lblHello);
 		lblHello.setText("Hello, " + username);
 
+		JButton btnEdit = new JButton("Edit");
+		btnEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.getContentPane().removeAll();
+				loadUserInfoPanel();
+				frame.repaint();
+			}
+		});
+		btnEdit.setBounds(515, 25, 75, 25);
+		MainPanel.add(btnEdit);
+
 		RecentVideos = new JTable();
-		RecentVideos.setBounds(79, 79, 483, 96);
+		RecentVideos.setBounds(79, 90, 483, 111);
 		MainPanel.add(RecentVideos);
 
-		newEmail = new JTextField();
-		newEmail.setBounds(335, 400, 168, 24);
-		MainPanel.add(newEmail);
-		newEmail.setColumns(10);
-
 		UserVideo = new JTable();
-		UserVideo.setBounds(82, 237, 480, 128);
+		UserVideo.setBounds(79, 260, 480, 128);
 		MainPanel.add(UserVideo);
 
 		JLabel lblPersonalVideos = new JLabel("Personal Videos");
-		lblPersonalVideos.setBounds(56, 188, 128, 16);
+		lblPersonalVideos.setBounds(56, 214, 128, 30);
 		MainPanel.add(lblPersonalVideos);
-
-		deletedID = new JTextField();
-		deletedID.setBounds(23, 401, 116, 22);
-		MainPanel.add(deletedID);
-		deletedID.setColumns(10);
-
-		JButton btnNewButton = new JButton("Delete Video by ID");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				int vid = new Integer(deletedID.getText());
-				try {
-					CallableStatement cs = DatabaseConnection.getConnection()
-							.prepareCall("{? = call dbo.deleteVideo(?)}");
-					cs.setInt(2, vid);
-					cs.registerOutParameter(1, Types.INTEGER);
-					cs.execute();
-					int returnValue = cs.getInt(1);
-					if (returnValue == 0) {
-						JOptionPane.showMessageDialog(frame, "Video deleted successfully");
-						frame.getContentPane().removeAll();
-						loadMainPanel();
-						frame.repaint();
-					} else {
-						JOptionPane.showMessageDialog(frame, "Action failed");
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-
-			}
-		});
-		btnNewButton.setBounds(154, 400, 156, 25);
-		MainPanel.add(btnNewButton);
 
 		ResultSet rs = null;
 		Connection conn = DatabaseConnection.getConnection();
@@ -309,26 +287,162 @@ public class Application {
 			e2.printStackTrace();
 		}
 
-		JButton btnChangeEmail = new JButton("Change Email");
-		btnChangeEmail.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				Connection conn = DatabaseConnection.getConnection();
+	}
+
+	private void loadUserInfoPanel() {
+
+		JPanel UserInfoPanel = new JPanel();
+		UserInfoPanel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(UserInfoPanel);
+		UserInfoPanel.setLayout(null);
+
+		JLabel lblHello = new JLabel();
+		lblHello.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblHello.setBounds(69, 44, 200, 50);
+		UserInfoPanel.add(lblHello);
+		lblHello.setText("Hello, " + username);
+
+		String email = "";
+
+		try {
+			Connection con = DatabaseConnection.getConnection();
+			String emailquery = "Select Email FROM [User] where Username = ?";
+			PreparedStatement emailstmt = con.prepareStatement(emailquery);
+			emailstmt.setString(1, username);
+			ResultSet emailre = emailstmt.executeQuery();
+			emailre.next();
+			email = emailre.getString(1);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+
+		JLabel lblEmail_1 = new JLabel("Email: " + email);
+		lblEmail_1.setBounds(69, 321, 300, 35);
+		UserInfoPanel.add(lblEmail_1);
+
+		String dob = "";
+
+		try {
+			Connection con = DatabaseConnection.getConnection();
+			String dobquery = "Select DOB FROM [User] where Username = ?";
+			PreparedStatement dobstmt = con.prepareStatement(dobquery);
+			dobstmt.setString(1, username);
+			ResultSet dobre = dobstmt.executeQuery();
+			dobre.next();
+			dob = dobre.getString(1);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+
+		JLabel lblBirthday = new JLabel("Birthday: " + dob);
+		lblBirthday.setBounds(69, 273, 300, 35);
+		UserInfoPanel.add(lblBirthday);
+
+		JButton btnChangePassword = new JButton("Change Password");
+		btnChangePassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				try {
-					CallableStatement stmt = conn.prepareCall("{? = call changeEmail(?,?)}");
-					stmt.setString(2, username);
-					stmt.setString(3, newEmail.getText());
-					stmt.registerOutParameter(1, Types.INTEGER);
-					stmt.execute();
-					int re = stmt.getInt(1);
-					if (re == 0)
-						JOptionPane.showMessageDialog(frame, "Email changed");
+					String newpass = JOptionPane.showInputDialog(frame, "Enter new password: ");
+					byte[] salt = us.getNewSalt();
+					String hash = us.hashPassword(salt, newpass);
+					Connection con = DatabaseConnection.getConnection();
+					CallableStatement change = con.prepareCall("{? = call changePass(?,?,?)}");
+					change.setString(2, username);
+					change.setBytes(3, salt);
+					change.setString(4, hash);
+					change.registerOutParameter(1, Types.INTEGER);
+					change.execute();
+					int returnValue = change.getInt(1);
+					if (returnValue != 0)
+						JOptionPane.showMessageDialog(null, "Can not change password");
+					else {
+						JOptionPane.showMessageDialog(null, "Password Changed");
+						username = null;
+						frame.getContentPane().removeAll();
+						loadLoginPanel();
+						frame.repaint();
+					}
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
 			}
 		});
-		btnChangeEmail.setBounds(515, 399, 115, 25);
-		MainPanel.add(btnChangeEmail);
+		btnChangePassword.setBounds(411, 184, 150, 35);
+		UserInfoPanel.add(btnChangePassword);
+
+		JButton btnChangeBirthday = new JButton("Change Birthday");
+		btnChangeBirthday.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String newdob = JOptionPane.showInputDialog(frame, "Enter new birthday: ");
+					Connection con = DatabaseConnection.getConnection();
+					CallableStatement change = con.prepareCall("{? = call changeDOB(?,?)}");
+					change.setString(2, username);
+					change.setString(3, newdob);
+					change.registerOutParameter(1, Types.INTEGER);
+					change.execute();
+					int returnValue = change.getInt(1);
+					if (returnValue != 0)
+						JOptionPane.showMessageDialog(null, "Can not change birthday");
+					else
+						JOptionPane.showMessageDialog(null, "Birthday Changed");
+					frame.getContentPane().removeAll();
+					loadUserInfoPanel();
+					frame.repaint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnChangeBirthday.setBounds(411, 273, 150, 35);
+		UserInfoPanel.add(btnChangeBirthday);
+
+		JButton btnChangeEmail = new JButton("Change Email");
+		btnChangeEmail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String newemail = JOptionPane.showInputDialog(frame, "Enter new email: ");
+					Connection con = DatabaseConnection.getConnection();
+					CallableStatement change = con.prepareCall("{? = call changeEmail(?,?)}");
+					change.setString(2, username);
+					change.setString(3, newemail);
+					change.registerOutParameter(1, Types.INTEGER);
+					change.execute();
+					int returnValue = change.getInt(1);
+					if (returnValue != 0)
+						JOptionPane.showMessageDialog(null, "Can not change email");
+					else
+						JOptionPane.showMessageDialog(null, "Email Changed");
+					frame.getContentPane().removeAll();
+					loadUserInfoPanel();
+					frame.repaint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnChangeEmail.setBounds(411, 321, 150, 35);
+		UserInfoPanel.add(btnChangeEmail);
+
+		JButton btnMyVideos = new JButton("My Videos");
+		btnMyVideos.setBounds(69, 126, 150, 35);
+		UserInfoPanel.add(btnMyVideos);
+
+		JButton btnMyContents = new JButton("My Contents");
+		btnMyContents.setBounds(69, 184, 150, 35);
+		UserInfoPanel.add(btnMyContents);
+
+		JButton btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				loadMainPanel();
+				frame.repaint();
+			}
+		});
+		btnBack.setBounds(411, 126, 150, 35);
+		UserInfoPanel.add(btnBack);
+
 	}
 
 	/**
@@ -340,6 +454,9 @@ public class Application {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
-		loadLoginPanel();
+//		loadLoginPanel();
+//		loadRegisterPanel();
+//		loadMainPanel();
+//		loadUserInfoPanel();
 	}
 }
