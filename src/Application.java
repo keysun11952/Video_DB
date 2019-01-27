@@ -49,6 +49,14 @@ public class Application {
 	private JTextField newEmail;
 	private JTable UserVideo;
 	private JTextField deletedID;
+	private JTextField txtUser;
+	private JTextField txtVideo;
+	private JTextField txtContent;
+	private JButton btnSearchUser;
+	private JButton btnSearchVideo;
+	private JButton btnSearchContent;
+	private JButton btnBack;
+	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -249,15 +257,15 @@ public class Application {
 		MainPanel.add(btnEdit);
 
 		RecentVideos = new JTable();
-		RecentVideos.setBounds(79, 90, 483, 111);
+		RecentVideos.setBounds(76, 76, 483, 111);
 		MainPanel.add(RecentVideos);
 
 		UserVideo = new JTable();
-		UserVideo.setBounds(79, 260, 480, 128);
+		UserVideo.setBounds(76, 228, 480, 128);
 		MainPanel.add(UserVideo);
 
 		JLabel lblPersonalVideos = new JLabel("Personal Videos");
-		lblPersonalVideos.setBounds(56, 214, 128, 30);
+		lblPersonalVideos.setBounds(56, 200, 128, 30);
 		MainPanel.add(lblPersonalVideos);
 
 		ResultSet rs = null;
@@ -283,6 +291,17 @@ public class Application {
 			ResultSet rs2 = null;
 			rs2 = st2.executeQuery(query2);
 			UserVideo.setModel(DbUtils.resultSetToTableModel(rs2));
+
+			JButton btnSearch = new JButton("Search");
+			btnSearch.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					frame.getContentPane().removeAll();
+					loadSearchPanel();
+					frame.repaint();
+				}
+			});
+			btnSearch.setBounds(493, 382, 97, 25);
+			MainPanel.add(btnSearch);
 		} catch (SQLException e2) {
 			e2.printStackTrace();
 		}
@@ -445,6 +464,277 @@ public class Application {
 
 	}
 
+	private void loadSearchPanel() {
+
+		JPanel SearchPanel = new JPanel();
+		SearchPanel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(SearchPanel);
+		SearchPanel.setLayout(null);
+
+		JLabel lblSearch = new JLabel("Search");
+		lblSearch.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblSearch.setBounds(68, 52, 88, 41);
+		SearchPanel.add(lblSearch);
+
+		txtUser = new JTextField();
+		txtUser.setBounds(68, 318, 342, 22);
+		SearchPanel.add(txtUser);
+		txtUser.setColumns(10);
+
+		txtVideo = new JTextField();
+		txtVideo.setBounds(68, 146, 342, 22);
+		SearchPanel.add(txtVideo);
+		txtVideo.setColumns(10);
+
+		txtContent = new JTextField();
+		txtContent.setBounds(68, 231, 342, 22);
+		SearchPanel.add(txtContent);
+		txtContent.setColumns(10);
+
+		btnSearchUser = new JButton("Search User");
+		btnSearchUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String user = txtUser.getText();
+					Connection con = DatabaseConnection.getConnection();
+					String query = "Select * From searchUser (?)";
+					PreparedStatement search = con.prepareStatement(query);
+					search.setString(1, user);
+					ResultSet rs = search.executeQuery();
+					frame.getContentPane().removeAll();
+					loadSearchUserPanel(rs);
+					frame.repaint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSearchUser.setBounds(422, 317, 135, 25);
+		SearchPanel.add(btnSearchUser);
+
+		btnSearchVideo = new JButton("Search Video");
+		btnSearchVideo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String video = txtVideo.getText();
+					Connection con = DatabaseConnection.getConnection();
+					String query = "Select * From searchVideoByName (?)";
+					PreparedStatement search = con.prepareStatement(query);
+					search.setString(1, video);
+					ResultSet rs = search.executeQuery();
+					frame.getContentPane().removeAll();
+					loadSearchVideoPanel(rs);
+					frame.repaint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSearchVideo.setBounds(422, 145, 135, 25);
+		SearchPanel.add(btnSearchVideo);
+
+		btnSearchContent = new JButton("Search Content");
+		btnSearchContent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String content = txtContent.getText();
+					Connection con = DatabaseConnection.getConnection();
+					String query = "Select * From searchContentByName (?)";
+					PreparedStatement search = con.prepareStatement(query);
+					search.setString(1, content);
+					ResultSet rs = search.executeQuery();
+					frame.getContentPane().removeAll();
+					loadSearchContentPanel(rs);
+					frame.repaint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSearchContent.setBounds(422, 230, 135, 25);
+		SearchPanel.add(btnSearchContent);
+
+		btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				loadMainPanel();
+				frame.repaint();
+			}
+		});
+		btnBack.setBounds(422, 63, 135, 25);
+		SearchPanel.add(btnBack);
+
+	}
+
+	private void loadSearchVideoPanel(ResultSet rs) {
+
+		JPanel loadSearchVideoPanel = new JPanel();
+		loadSearchVideoPanel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(loadSearchVideoPanel);
+		loadSearchVideoPanel.setLayout(null);
+
+		JLabel lblVideo = new JLabel("Video");
+		lblVideo.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblVideo.setBounds(62, 35, 105, 25);
+		loadSearchVideoPanel.add(lblVideo);
+
+		table = new JTable();
+		table.setBounds(62, 86, 512, 271);
+		loadSearchVideoPanel.add(table);
+		table.setModel(DbUtils.resultSetToTableModel(rs));
+
+		btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				loadSearchPanel();
+				frame.repaint();
+			}
+		});
+		btnBack.setBounds(439, 38, 135, 25);
+		loadSearchVideoPanel.add(btnBack);
+		
+		txtVideo = new JTextField();
+		txtVideo.setBounds(62, 382, 365, 22);
+		loadSearchVideoPanel.add(txtVideo);
+		txtVideo.setColumns(10);
+		
+		btnSearchVideo = new JButton("Search Video");
+		btnSearchVideo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String video = txtVideo.getText();
+					Connection con = DatabaseConnection.getConnection();
+					String query = "Select * From searchVideoByName (?)";
+					PreparedStatement search = con.prepareStatement(query);
+					search.setString(1, video);
+					ResultSet rs = search.executeQuery();
+					frame.getContentPane().removeAll();
+					loadSearchVideoPanel(rs);
+					frame.repaint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSearchVideo.setBounds(439, 381, 135, 25);
+		loadSearchVideoPanel.add(btnSearchVideo);
+		
+	}
+
+	private void loadSearchContentPanel(ResultSet rs) {
+
+		JPanel loadSearchContentPanel = new JPanel();
+		loadSearchContentPanel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(loadSearchContentPanel);
+		loadSearchContentPanel.setLayout(null);
+
+		JLabel lblContent = new JLabel("Content");
+		lblContent.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblContent.setBounds(62, 35, 105, 25);
+		loadSearchContentPanel.add(lblContent);
+
+		table = new JTable();
+		table.setBounds(62, 86, 512, 271);
+		loadSearchContentPanel.add(table);
+		table.setModel(DbUtils.resultSetToTableModel(rs));
+
+		btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				loadSearchPanel();
+				frame.repaint();
+			}
+		});
+		btnBack.setBounds(439, 38, 135, 25);
+		loadSearchContentPanel.add(btnBack);
+		
+		txtContent = new JTextField();
+		txtContent.setBounds(62, 382, 365, 22);
+		loadSearchContentPanel.add(txtContent);
+		txtContent.setColumns(10);
+
+		btnSearchContent = new JButton("Search Content");
+		btnSearchContent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String content = txtContent.getText();
+					Connection con = DatabaseConnection.getConnection();
+					String query = "Select * From searchContentByName (?)";
+					PreparedStatement search = con.prepareStatement(query);
+					search.setString(1, content);
+					ResultSet rs = search.executeQuery();
+					frame.getContentPane().removeAll();
+					loadSearchContentPanel(rs);
+					frame.repaint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSearchContent.setBounds(439, 381, 135, 25);
+		loadSearchContentPanel.add(btnSearchContent);
+		
+	}
+	
+	private void loadSearchUserPanel(ResultSet rs) {
+
+		JPanel loadSearchUserPanel = new JPanel();
+		loadSearchUserPanel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(loadSearchUserPanel);
+		loadSearchUserPanel.setLayout(null);
+
+		JLabel lblUser = new JLabel("User");
+		lblUser.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblUser.setBounds(62, 35, 105, 25);
+		loadSearchUserPanel.add(lblUser);
+
+		table = new JTable();
+		table.setBounds(62, 86, 512, 271);
+		loadSearchUserPanel.add(table);
+		table.setModel(DbUtils.resultSetToTableModel(rs));
+
+		btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				loadSearchPanel();
+				frame.repaint();
+			}
+		});
+		btnBack.setBounds(439, 38, 135, 25);
+		loadSearchUserPanel.add(btnBack);
+		
+		txtUser = new JTextField();
+		txtUser.setBounds(62, 382, 365, 22);
+		loadSearchUserPanel.add(txtUser);
+		txtUser.setColumns(10);
+		
+		btnSearchUser = new JButton("Search User");
+		btnSearchUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String user = txtUser.getText();
+					Connection con = DatabaseConnection.getConnection();
+					String query = "Select * From searchUser (?)";
+					PreparedStatement search = con.prepareStatement(query);
+					search.setString(1, user);
+					ResultSet rs = search.executeQuery();
+					frame.getContentPane().removeAll();
+					loadSearchUserPanel(rs);
+					frame.repaint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSearchUser.setBounds(439, 381, 135, 25);
+		loadSearchUserPanel.add(btnSearchUser);
+
+	}
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -454,9 +744,15 @@ public class Application {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
-//		loadLoginPanel();
+		loadLoginPanel();
 //		loadRegisterPanel();
 //		loadMainPanel();
 //		loadUserInfoPanel();
+//		loadSearchPanel();
+		
+//		ResultSet rs = null;
+//		loadSearchVideoPanel(rs);
+//		loadSearchContentPanel(rs);
+//		loadSearchUserPanel(rs);
 	}
 }
