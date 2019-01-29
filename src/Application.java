@@ -46,9 +46,7 @@ public class Application {
 	private String username = null;
 	private int uid = -1;
 	private JTable RecentVideos;
-	private JTextField newEmail;
 	private JTable UserVideo;
-	private JTextField deletedID;
 	private JTextField txtUser;
 	private JTextField txtVideo;
 	private JTextField txtContent;
@@ -57,6 +55,21 @@ public class Application {
 	private JButton btnSearchContent;
 	private JButton btnBack;
 	private JTable table;
+	private JTextField VIDInput;
+	private JButton btnNewButton_1;
+	private JTable ContentInfoTable;
+	private JTable CommentTable;
+	private JTable TagTable;
+	private JTextField CommentInput;
+	private JButton btnPostComment;
+	private JButton btnNewButton_2;
+	private JButton btnDislike;
+	private JTextField DonateInput;
+	private JButton btnNewButton_3;
+	private JTextField ContentInput;
+	private JButton btnSubscribe;
+	private JLabel lblNewLabel_1;
+	private JLabel SubscribeNumber;
 
 	/**
 	 * Launch the application.
@@ -67,7 +80,7 @@ public class Application {
 				try {
 					Application window = new Application();
 					DatabaseConnection con = DatabaseConnection.getInstance();
-					boolean r = con.connect(USERNAME, PASSWORD);
+					con.connect(USERNAME, PASSWORD);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -270,7 +283,6 @@ public class Application {
 
 		ResultSet rs = null;
 		Connection conn = DatabaseConnection.getConnection();
-		CallableStatement stmt = null;
 		try {
 			Statement st = conn.createStatement();
 			String query = "SELECT * From LastUploadedVideosView";
@@ -302,6 +314,75 @@ public class Application {
 			});
 			btnSearch.setBounds(493, 382, 97, 25);
 			MainPanel.add(btnSearch);
+
+			VIDInput = new JTextField();
+			VIDInput.setBounds(76, 383, 81, 22);
+			MainPanel.add(VIDInput);
+			VIDInput.setColumns(10);
+
+			JLabel lblNewLabel = new JLabel("Enter Video ID");
+			lblNewLabel.setBounds(76, 369, 116, 16);
+			MainPanel.add(lblNewLabel);
+
+			JButton btnNewButton = new JButton("Go");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						String q = "{? = call dbo.checkVideo(?)}";
+						CallableStatement ss = conn.prepareCall(q);
+						ss.setInt(2, new Integer(VIDInput.getText()));
+						ss.registerOutParameter(1, java.sql.Types.INTEGER);
+						ss.execute();
+						boolean exists = ss.getInt(1) == 0;
+						if (!exists) {
+							JOptionPane.showMessageDialog(frame, "Video doesn't exist");
+							return;
+						}
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+					frame.getContentPane().removeAll();
+					loadVideoPanel(new Integer(VIDInput.getText()));
+					frame.repaint();
+				}
+			});
+			btnNewButton.setBounds(158, 382, 56, 25);
+			MainPanel.add(btnNewButton);
+
+			ContentInput = new JTextField();
+			ContentInput.setColumns(10);
+			ContentInput.setBounds(244, 383, 81, 22);
+			MainPanel.add(ContentInput);
+
+			JLabel lblEnterContentId = new JLabel("Enter Content ID");
+			lblEnterContentId.setBounds(244, 369, 116, 16);
+			MainPanel.add(lblEnterContentId);
+
+			JButton button = new JButton("Go");
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						String q = "{? = call dbo.checkContent(?) }";
+						CallableStatement ss = conn.prepareCall(q);
+						ss.setInt(2, new Integer(ContentInput.getText()));
+						ss.registerOutParameter(1, java.sql.Types.INTEGER);
+						ss.execute();
+						boolean exists = ss.getInt(1) == 0;
+						if (!exists) {
+							JOptionPane.showMessageDialog(frame, "Content doesn't exist");
+							return;
+						}
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+					frame.getContentPane().removeAll();
+					loadContentPanel(new Integer(ContentInput.getText()));
+					frame.repaint();
+				}
+			});
+			button.setBounds(330, 382, 56, 25);
+			MainPanel.add(button);
+
 		} catch (SQLException e2) {
 			e2.printStackTrace();
 		}
@@ -594,18 +675,18 @@ public class Application {
 		});
 		btnBack.setBounds(439, 38, 135, 25);
 		loadSearchVideoPanel.add(btnBack);
-		
+
 		txtVideo = new JTextField();
-		txtVideo.setBounds(62, 382, 365, 22);
+		txtVideo.setBounds(162, 382, 365, 22);
 		loadSearchVideoPanel.add(txtVideo);
 		txtVideo.setColumns(10);
-		
+
+		Connection con = DatabaseConnection.getConnection();
 		btnSearchVideo = new JButton("Search Video");
 		btnSearchVideo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String video = txtVideo.getText();
-					Connection con = DatabaseConnection.getConnection();
 					String query = "Select * From searchVideoByName (?)";
 					PreparedStatement search = con.prepareStatement(query);
 					search.setString(1, video);
@@ -621,6 +702,39 @@ public class Application {
 		btnSearchVideo.setBounds(439, 381, 135, 25);
 		loadSearchVideoPanel.add(btnSearchVideo);
 		
+		VIDInput = new JTextField();
+		VIDInput.setBounds(210, 53, 81, 22);
+		loadSearchVideoPanel.add(VIDInput);
+		VIDInput.setColumns(10);
+
+		JLabel lblNewLabel = new JLabel("Enter Video ID");
+		lblNewLabel.setBounds(226, 29, 116, 16);
+		loadSearchVideoPanel.add(lblNewLabel);
+		
+		JButton btnNewButton = new JButton("Go");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String q = "{? = call dbo.checkVideo(?)}";
+					CallableStatement ss = con.prepareCall(q);
+					ss.setInt(2, new Integer(VIDInput.getText()));
+					ss.registerOutParameter(1, java.sql.Types.INTEGER);
+					ss.execute();
+					boolean exists = ss.getInt(1) == 0;
+					if (!exists) {
+						JOptionPane.showMessageDialog(frame, "Video doesn't exist");
+						return;
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				frame.getContentPane().removeAll();
+				loadVideoPanel(new Integer(VIDInput.getText()));
+				frame.repaint();
+			}
+		});
+		btnNewButton.setBounds(300, 52, 56, 25);
+		loadSearchVideoPanel.add(btnNewButton);
 	}
 
 	private void loadSearchContentPanel(ResultSet rs) {
@@ -650,18 +764,18 @@ public class Application {
 		});
 		btnBack.setBounds(439, 38, 135, 25);
 		loadSearchContentPanel.add(btnBack);
-		
+
 		txtContent = new JTextField();
 		txtContent.setBounds(62, 382, 365, 22);
 		loadSearchContentPanel.add(txtContent);
 		txtContent.setColumns(10);
+		Connection con = DatabaseConnection.getConnection();
 
 		btnSearchContent = new JButton("Search Content");
 		btnSearchContent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String content = txtContent.getText();
-					Connection con = DatabaseConnection.getConnection();
 					String query = "Select * From searchContentByName (?)";
 					PreparedStatement search = con.prepareStatement(query);
 					search.setString(1, content);
@@ -676,9 +790,208 @@ public class Application {
 		});
 		btnSearchContent.setBounds(439, 381, 135, 25);
 		loadSearchContentPanel.add(btnSearchContent);
-		
+
+		ContentInput = new JTextField();
+		ContentInput.setColumns(10);
+		ContentInput.setBounds(200, 52, 81, 22);
+		loadSearchContentPanel.add(ContentInput);
+
+		JLabel lblEnterContentId = new JLabel("Enter Content ID");
+		lblEnterContentId.setBounds(234, 20, 116, 16);
+		loadSearchContentPanel.add(lblEnterContentId);
+
+		JButton button = new JButton("Go");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String q = "{? = call dbo.checkContent(?) }";
+					CallableStatement ss = con.prepareCall(q);
+					ss.setInt(2, new Integer(ContentInput.getText()));
+					ss.registerOutParameter(1, java.sql.Types.INTEGER);
+					ss.execute();
+					boolean exists = ss.getInt(1) == 0;
+					if (!exists) {
+						JOptionPane.showMessageDialog(frame, "Content doesn't exist");
+						return;
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				frame.getContentPane().removeAll();
+				loadContentPanel(new Integer(ContentInput.getText()));
+				frame.repaint();
+			}
+		});
+		button.setBounds(280, 52, 56, 25);
+		loadSearchContentPanel.add(button);
 	}
-	
+
+	private void loadVideoPanel(int vid) {
+		JPanel panel = new JPanel();
+		panel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(panel);
+		panel.setLayout(null);
+		btnNewButton_1 = new JButton("Back To Main Page");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				loadMainPanel();
+				frame.repaint();
+			}
+		});
+		btnNewButton_1.setBounds(12, 13, 187, 30);
+		panel.add(btnNewButton_1);
+		ResultSet rsomment = null;
+		Connection conn = DatabaseConnection.getConnection();
+		// show video info
+		ResultSet rs = null;
+		ContentInfoTable = new JTable();
+		ContentInfoTable.setBounds(12, 56, 618, 30);
+		panel.add(ContentInfoTable);
+		try {
+			String q = "Select * from dbo.getVideoInfo(?)";
+			PreparedStatement ps = conn.prepareStatement(q);
+			ps.setInt(1, vid);
+			rs = ps.executeQuery();
+			ContentInfoTable.setModel(DbUtils.resultSetToTableModel(rs));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		// show comments
+		ResultSet rsc = null;
+		CommentTable = new JTable();
+		CommentTable.setBounds(51, 120, 502, 90);
+		panel.add(CommentTable);
+		try {
+			String qc = "Select * from dbo.getComment(?)";
+			PreparedStatement psc = conn.prepareStatement(qc);
+			psc.setInt(1, vid);
+			rsc = psc.executeQuery();
+			CommentTable.setModel(DbUtils.resultSetToTableModel(rsc));
+
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		// show tags
+		TagTable = new JTable();
+		TagTable.setBounds(51, 256, 121, 146);
+		panel.add(TagTable);
+		try {
+			String qc = "Select Tag from dbo.VideoTag Where VID = ?";
+			PreparedStatement psc = conn.prepareStatement(qc);
+			psc.setInt(1, vid);
+			rsc = psc.executeQuery();
+			TagTable.setModel(DbUtils.resultSetToTableModel(rsc));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		// input comment
+		CommentInput = new JTextField();
+		CommentInput.setBounds(51, 221, 413, 22);
+		panel.add(CommentInput);
+		CommentInput.setColumns(10);
+
+		btnPostComment = new JButton("Post Comment");
+		btnPostComment.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String q = "{Call dbo.commentVideo(?,?,?)}";
+				CallableStatement cs;
+				try {
+					cs = conn.prepareCall(q);
+					cs.setInt(1, uid);
+					cs.setInt(2, vid);
+					cs.setString(3, CommentInput.getText());
+					cs.execute();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				frame.getContentPane().removeAll();
+				loadVideoPanel(vid);
+				frame.repaint();
+			}
+		});
+		btnPostComment.setBounds(462, 217, 150, 30);
+		panel.add(btnPostComment);
+		// like button
+		btnNewButton_2 = new JButton("Like");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String q = "{Call dbo.likeOrDislike(?,?,?)}";
+				CallableStatement cs;
+				try {
+					cs = conn.prepareCall(q);
+					cs.setInt(1, uid);
+					cs.setInt(2, vid);
+					cs.setByte(3, (byte) 1);
+					cs.execute();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				frame.getContentPane().removeAll();
+				loadVideoPanel(vid);
+				frame.repaint();
+			}
+		});
+		btnNewButton_2.setBounds(429, 265, 71, 22);
+		panel.add(btnNewButton_2);
+		// dislike button
+		btnDislike = new JButton("Dislike");
+		btnDislike.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String q = "{Call dbo.likeOrDislike(?,?,?)}";
+				CallableStatement cs;
+				try {
+					cs = conn.prepareCall(q);
+					cs.setInt(1, uid);
+					cs.setInt(2, vid);
+					cs.setByte(3, (byte) 0);
+					cs.execute();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				frame.getContentPane().removeAll();
+				loadVideoPanel(vid);
+				frame.repaint();
+			}
+		});
+		btnDislike.setBounds(512, 265, 100, 22);
+		panel.add(btnDislike);
+		// donate
+		DonateInput = new JTextField();
+		DonateInput.setBounds(429, 311, 76, 22);
+		panel.add(DonateInput);
+		DonateInput.setColumns(10);
+
+		btnNewButton_3 = new JButton("Donate");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String q = "{Call dbo.donateMoney(?,?,?)}";
+				CallableStatement cs;
+				try {
+					cs = conn.prepareCall(q);
+					cs.setInt(1, uid);
+					CallableStatement ps = conn.prepareCall("{? = call dbo.getUIDfromVID(?)}");
+					ps.setInt(2, vid);
+					ps.registerOutParameter(1, java.sql.Types.INTEGER);
+					ps.execute();
+					Integer cid = ps.getInt(1);
+					cs.setInt(2, cid);
+					cs.setInt(3, new Integer(DonateInput.getText()));
+					cs.execute();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				JOptionPane.showMessageDialog(frame, "Donate succeed");
+				frame.getContentPane().removeAll();
+				loadVideoPanel(vid);
+				frame.repaint();
+			}
+		});
+		btnNewButton_3.setBounds(515, 310, 97, 25);
+		panel.add(btnNewButton_3);
+
+	}
+
 	private void loadSearchUserPanel(ResultSet rs) {
 
 		JPanel loadSearchUserPanel = new JPanel();
@@ -706,12 +1019,12 @@ public class Application {
 		});
 		btnBack.setBounds(439, 38, 135, 25);
 		loadSearchUserPanel.add(btnBack);
-		
+
 		txtUser = new JTextField();
 		txtUser.setBounds(62, 382, 365, 22);
 		loadSearchUserPanel.add(txtUser);
 		txtUser.setColumns(10);
-		
+
 		btnSearchUser = new JButton("Search User");
 		btnSearchUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -735,6 +1048,122 @@ public class Application {
 
 	}
 
+	private void loadContentPanel(int cid) {
+		JPanel panel = new JPanel();
+		panel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(panel);
+		panel.setLayout(null);
+		Connection con = DatabaseConnection.getConnection();
+
+		// get subscribe number
+		SubscribeNumber = new JLabel("");
+		SubscribeNumber.setBounds(526, 114, 56, 16);
+		panel.add(SubscribeNumber);
+		try {
+			String qc = "Select dbo.getSubNumByContent(?)";
+			PreparedStatement psc = con.prepareStatement(qc);
+			psc.setInt(1, cid);
+			ResultSet rsc = psc.executeQuery();
+			rsc.next();
+			SubscribeNumber.setText(Integer.toString(rsc.getInt(1)));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		// back to main page button
+		btnNewButton_1 = new JButton("Back To Main Page");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				loadMainPanel();
+				frame.repaint();
+			}
+		});
+		btnNewButton_1.setBounds(12, 13, 187, 30);
+		panel.add(btnNewButton_1);
+
+		ResultSet rsomment = null;
+		// show content info based on type
+		ResultSet rs = null;
+		ContentInfoTable = new JTable();
+		ContentInfoTable.setBounds(12, 56, 618, 30);
+		panel.add(ContentInfoTable);
+		try {
+			String q1 = "Select dbo.getContentType(?)";
+			PreparedStatement ps1 = con.prepareStatement(q1);
+			ps1.setInt(1, cid);
+			ResultSet rs1 = ps1.executeQuery();
+			rs1.next();
+			int type = rs1.getInt(1);
+			String q = null;
+			switch (type) {
+			case 1:
+				q = "Select * from dbo.getTVSeriesInfo(?)";
+				break;
+			case 2:
+				q = "Select * from dbo.getChannelInfo(?)";
+				break;
+			default:
+				q = "Select * from dbo.getLiveStreamInfo(?)";
+				break;
+			}
+			PreparedStatement ps = con.prepareStatement(q);
+			ps.setInt(1, cid);
+			rs = ps.executeQuery();
+			ContentInfoTable.setModel(DbUtils.resultSetToTableModel(rs));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		// show tags
+		TagTable = new JTable();
+		TagTable.setBounds(51, 256, 121, 146);
+		panel.add(TagTable);
+		try {
+			String qc = "Select Tag from dbo.ContentTag Where ContentID = ?";
+			PreparedStatement psc = con.prepareStatement(qc);
+			psc.setInt(1, cid);
+			ResultSet rsc = psc.executeQuery();
+			TagTable.setModel(DbUtils.resultSetToTableModel(rsc));
+
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		// subscribe button
+		btnSubscribe = new JButton("Subscribe");
+		btnSubscribe.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String qc = " {? = call dbo.subscribeContent(?,?)}";
+					CallableStatement psc;
+					psc = con.prepareCall(qc);
+					psc.registerOutParameter(1, java.sql.Types.INTEGER);
+					psc.setInt(2, uid);
+					psc.setInt(3, cid);
+					psc.execute();
+					int sub = psc.getInt(1);
+					if (sub == 0) {
+						JOptionPane.showMessageDialog(frame, "subscribe successfully");
+					} else if (sub == 1) {
+						JOptionPane.showMessageDialog(frame, "unsubscribe successfully");
+					} else {
+						JOptionPane.showMessageDialog(frame, "something wrong");
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				frame.getContentPane().removeAll();
+				loadContentPanel(cid);
+				frame.repaint();
+			}
+		});
+		btnSubscribe.setBounds(390, 152, 108, 47);
+		panel.add(btnSubscribe);
+
+		lblNewLabel_1 = new JLabel("Subscribe# = ");
+		lblNewLabel_1.setBounds(390, 107, 131, 30);
+		panel.add(lblNewLabel_1);
+
+	}
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -745,14 +1174,17 @@ public class Application {
 		frame.getContentPane().setLayout(null);
 
 		loadLoginPanel();
-//		loadRegisterPanel();
-//		loadMainPanel();
-//		loadUserInfoPanel();
-//		loadSearchPanel();
-		
-//		ResultSet rs = null;
-//		loadSearchVideoPanel(rs);
-//		loadSearchContentPanel(rs);
-//		loadSearchUserPanel(rs);
+		// loadContentPanel(1);
+		// loadVideoPanel(1);
+		// loadRegisterPanel();
+		// loadMainPanel();
+		// loadUserInfoPanel();
+		// loadSearchPanel();
+
+		// ResultSet rs = null;
+		// loadSearchVideoPanel(rs);
+		// loadSearchContentPanel(rs);
+		// loadSearchUserPanel(rs);
 	}
+
 }
