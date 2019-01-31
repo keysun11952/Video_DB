@@ -1,18 +1,13 @@
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
 import java.awt.BorderLayout;
 import java.awt.Panel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import com.sun.org.apache.regexp.internal.RE;
-
 import sun.security.util.Password;
-
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -50,7 +45,7 @@ public class Application {
 	private JTextField txtUser;
 	private JTextField txtVideo;
 	private JTextField txtContent;
-	private JButton btnSearchUser;
+	private JButton btnSearchTag;
 	private JButton btnSearchVideo;
 	private JButton btnSearchContent;
 	private JButton btnBack;
@@ -99,6 +94,8 @@ public class Application {
 	private JTextField newVideoLength;
 	private JTextField newVideoCategory;
 	private JTextField newVideoUrl;
+	private JLabel lblContentDetail;
+	private JTextField txtTag;
 
 	/**
 	 * Launch the application.
@@ -128,7 +125,7 @@ public class Application {
 	}
 
 	private void setUp() {
-		File file = new File("Video_DB/src\\setting");
+		File file = new File("src/setting");
 		Scanner scanner = null;
 		try {
 			scanner = new Scanner(file);
@@ -597,26 +594,52 @@ public class Application {
 
 		JLabel lblSearch = new JLabel("Search");
 		lblSearch.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblSearch.setBounds(68, 52, 88, 41);
+		lblSearch.setBounds(68, 52, 88, 40);
 		SearchPanel.add(lblSearch);
 
 		txtUser = new JTextField();
-		txtUser.setBounds(68, 318, 342, 22);
+		txtUser.setBounds(68, 263, 342, 30);
 		SearchPanel.add(txtUser);
 		txtUser.setColumns(10);
 
 		txtVideo = new JTextField();
-		txtVideo.setBounds(68, 146, 342, 22);
+		txtVideo.setBounds(68, 126, 342, 30);
 		SearchPanel.add(txtVideo);
 		txtVideo.setColumns(10);
 
 		txtContent = new JTextField();
-		txtContent.setBounds(68, 231, 342, 22);
+		txtContent.setBounds(68, 196, 342, 30);
 		SearchPanel.add(txtContent);
 		txtContent.setColumns(10);
+		
+		txtTag = new JTextField();
+		txtTag.setColumns(10);
+		txtTag.setBounds(68, 332, 342, 30);
+		SearchPanel.add(txtTag);
+		
+		JButton btnSearchTag = new JButton("Search Tag");
+		btnSearchTag.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					String tag = txtTag.getText();
+					Connection con = DatabaseConnection.getConnection();
+					String query = "Select * From searchVideoByTag (?)";
+					PreparedStatement search = con.prepareStatement(query);
+					search.setString(1, tag);
+					ResultSet rs = search.executeQuery();
+					frame.getContentPane().removeAll();
+					loadSearchTagPanel(rs);
+					frame.repaint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSearchTag.setBounds(422, 331, 135, 30);
+		SearchPanel.add(btnSearchTag);
 
-		btnSearchUser = new JButton("Search User");
-		btnSearchUser.addActionListener(new ActionListener() {
+		btnSearchTag = new JButton("Search User");
+		btnSearchTag.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String user = txtUser.getText();
@@ -633,8 +656,8 @@ public class Application {
 				}
 			}
 		});
-		btnSearchUser.setBounds(422, 317, 135, 25);
-		SearchPanel.add(btnSearchUser);
+		btnSearchTag.setBounds(422, 263, 135, 30);
+		SearchPanel.add(btnSearchTag);
 
 		btnSearchVideo = new JButton("Search Video");
 		btnSearchVideo.addActionListener(new ActionListener() {
@@ -654,7 +677,7 @@ public class Application {
 				}
 			}
 		});
-		btnSearchVideo.setBounds(422, 145, 135, 25);
+		btnSearchVideo.setBounds(422, 125, 135, 30);
 		SearchPanel.add(btnSearchVideo);
 
 		btnSearchContent = new JButton("Search Content");
@@ -675,7 +698,7 @@ public class Application {
 				}
 			}
 		});
-		btnSearchContent.setBounds(422, 230, 135, 25);
+		btnSearchContent.setBounds(422, 196, 135, 30);
 		SearchPanel.add(btnSearchContent);
 
 		btnBack = new JButton("Back");
@@ -686,9 +709,9 @@ public class Application {
 				frame.repaint();
 			}
 		});
-		btnBack.setBounds(422, 63, 135, 25);
+		btnBack.setBounds(422, 63, 135, 30);
 		SearchPanel.add(btnBack);
-
+		
 	}
 
 	private void loadSearchVideoPanel(ResultSet rs) {
@@ -720,7 +743,7 @@ public class Application {
 		loadSearchVideoPanel.add(btnBack);
 
 		txtVideo = new JTextField();
-		txtVideo.setBounds(162, 382, 365, 22);
+		txtVideo.setBounds(62, 382, 365, 22);
 		loadSearchVideoPanel.add(txtVideo);
 		txtVideo.setColumns(10);
 
@@ -744,16 +767,16 @@ public class Application {
 		});
 		btnSearchVideo.setBounds(439, 381, 135, 25);
 		loadSearchVideoPanel.add(btnSearchVideo);
-		
+
 		VIDInput = new JTextField();
-		VIDInput.setBounds(210, 53, 81, 22);
+		VIDInput.setBounds(217, 51, 81, 22);
 		loadSearchVideoPanel.add(VIDInput);
 		VIDInput.setColumns(10);
 
 		JLabel lblNewLabel = new JLabel("Enter Video ID");
-		lblNewLabel.setBounds(226, 29, 116, 16);
+		lblNewLabel.setBounds(217, 35, 116, 16);
 		loadSearchVideoPanel.add(lblNewLabel);
-		
+
 		JButton btnNewButton = new JButton("Go");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -776,7 +799,7 @@ public class Application {
 				frame.repaint();
 			}
 		});
-		btnNewButton.setBounds(300, 52, 56, 25);
+		btnNewButton.setBounds(298, 50, 56, 25);
 		loadSearchVideoPanel.add(btnNewButton);
 	}
 
@@ -836,11 +859,11 @@ public class Application {
 
 		ContentInput = new JTextField();
 		ContentInput.setColumns(10);
-		ContentInput.setBounds(200, 52, 81, 22);
+		ContentInput.setBounds(212, 49, 81, 22);
 		loadSearchContentPanel.add(ContentInput);
 
 		JLabel lblEnterContentId = new JLabel("Enter Content ID");
-		lblEnterContentId.setBounds(234, 20, 116, 16);
+		lblEnterContentId.setBounds(210, 31, 116, 16);
 		loadSearchContentPanel.add(lblEnterContentId);
 
 		JButton button = new JButton("Go");
@@ -865,7 +888,7 @@ public class Application {
 				frame.repaint();
 			}
 		});
-		button.setBounds(280, 52, 56, 25);
+		button.setBounds(294, 48, 56, 25);
 		loadSearchContentPanel.add(button);
 	}
 
@@ -874,7 +897,7 @@ public class Application {
 		panel.setBounds(0, 0, 642, 437);
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
-		btnNewButton_1 = new JButton("Back To Main Page");
+		btnNewButton_1 = new JButton("Back");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.getContentPane().removeAll();
@@ -882,14 +905,14 @@ public class Application {
 				frame.repaint();
 			}
 		});
-		btnNewButton_1.setBounds(12, 13, 187, 30);
+		btnNewButton_1.setBounds(482, 27, 128, 30);
 		panel.add(btnNewButton_1);
 		ResultSet rsomment = null;
 		Connection conn = DatabaseConnection.getConnection();
 		// show video info
 		ResultSet rs = null;
 		ContentInfoTable = new JTable();
-		ContentInfoTable.setBounds(12, 56, 618, 30);
+		ContentInfoTable.setBounds(0, 70, 642, 37);
 		panel.add(ContentInfoTable);
 		try {
 			String q = "Select * from dbo.getVideoInfo(?)";
@@ -903,7 +926,7 @@ public class Application {
 		// show comments
 		ResultSet rsc = null;
 		CommentTable = new JTable();
-		CommentTable.setBounds(51, 120, 502, 90);
+		CommentTable.setBounds(51, 120, 529, 126);
 		panel.add(CommentTable);
 		try {
 			String qc = "Select * from dbo.getComment(?)";
@@ -917,7 +940,7 @@ public class Application {
 		}
 		// show tags
 		TagTable = new JTable();
-		TagTable.setBounds(51, 256, 121, 146);
+		TagTable.setBounds(51, 295, 242, 107);
 		panel.add(TagTable);
 		try {
 			String qc = "Select Tag from dbo.VideoTag Where VID = ?";
@@ -930,7 +953,7 @@ public class Application {
 		}
 		// input comment
 		CommentInput = new JTextField();
-		CommentInput.setBounds(51, 221, 413, 22);
+		CommentInput.setBounds(46, 259, 400, 22);
 		panel.add(CommentInput);
 		CommentInput.setColumns(10);
 
@@ -953,7 +976,7 @@ public class Application {
 				frame.repaint();
 			}
 		});
-		btnPostComment.setBounds(462, 217, 150, 30);
+		btnPostComment.setBounds(458, 258, 134, 24);
 		panel.add(btnPostComment);
 		// like button
 		btnNewButton_2 = new JButton("Like");
@@ -975,7 +998,7 @@ public class Application {
 				frame.repaint();
 			}
 		});
-		btnNewButton_2.setBounds(429, 265, 71, 22);
+		btnNewButton_2.setBounds(376, 311, 71, 22);
 		panel.add(btnNewButton_2);
 		// dislike button
 		btnDislike = new JButton("Dislike");
@@ -997,11 +1020,11 @@ public class Application {
 				frame.repaint();
 			}
 		});
-		btnDislike.setBounds(512, 265, 100, 22);
+		btnDislike.setBounds(459, 311, 100, 22);
 		panel.add(btnDislike);
 		// donate
 		DonateInput = new JTextField();
-		DonateInput.setBounds(429, 311, 76, 22);
+		DonateInput.setBounds(376, 357, 76, 22);
 		panel.add(DonateInput);
 		DonateInput.setColumns(10);
 
@@ -1030,8 +1053,13 @@ public class Application {
 				frame.repaint();
 			}
 		});
-		btnNewButton_3.setBounds(515, 310, 97, 25);
+		btnNewButton_3.setBounds(462, 356, 97, 25);
 		panel.add(btnNewButton_3);
+		
+		JLabel lblVideoDetail = new JLabel("Video Detail");
+		lblVideoDetail.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblVideoDetail.setBounds(51, 27, 139, 30);
+		panel.add(lblVideoDetail);
 
 	}
 
@@ -1068,8 +1096,8 @@ public class Application {
 		loadSearchUserPanel.add(txtUser);
 		txtUser.setColumns(10);
 
-		btnSearchUser = new JButton("Search User");
-		btnSearchUser.addActionListener(new ActionListener() {
+		btnSearchTag = new JButton("Search User");
+		btnSearchTag.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String user = txtUser.getText();
@@ -1086,9 +1114,100 @@ public class Application {
 				}
 			}
 		});
-		btnSearchUser.setBounds(439, 381, 135, 25);
-		loadSearchUserPanel.add(btnSearchUser);
+		btnSearchTag.setBounds(439, 381, 135, 25);
+		loadSearchUserPanel.add(btnSearchTag);
 
+	}
+	
+	private void loadSearchTagPanel(ResultSet rs) {
+
+		JPanel loadSearchTagPanel = new JPanel();
+		loadSearchTagPanel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(loadSearchTagPanel);
+		loadSearchTagPanel.setLayout(null);
+
+		JLabel lblTag = new JLabel("Tag");
+		lblTag.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblTag.setBounds(62, 35, 105, 25);
+		loadSearchTagPanel.add(lblTag);
+
+		table = new JTable();
+		table.setBounds(62, 86, 512, 271);
+		loadSearchTagPanel.add(table);
+		table.setModel(DbUtils.resultSetToTableModel(rs));
+
+		btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				loadSearchPanel();
+				frame.repaint();
+			}
+		});
+		btnBack.setBounds(439, 38, 135, 25);
+		loadSearchTagPanel.add(btnBack);
+
+		txtTag = new JTextField();
+		txtTag.setBounds(62, 382, 365, 22);
+		loadSearchTagPanel.add(txtTag);
+		txtTag.setColumns(10);
+
+		btnSearchTag = new JButton("Search Tag");
+		btnSearchTag.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String tag = txtTag.getText();
+					Connection con = DatabaseConnection.getConnection();
+					String query = "Select * From searchVideoByTag (?)";
+					PreparedStatement search = con.prepareStatement(query);
+					search.setString(1, tag);
+					ResultSet rs = search.executeQuery();
+					frame.getContentPane().removeAll();
+					loadSearchTagPanel(rs);
+					frame.repaint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSearchTag.setBounds(439, 381, 135, 25);
+		loadSearchTagPanel.add(btnSearchTag);
+
+		VIDInput = new JTextField();
+		VIDInput.setBounds(217, 51, 81, 22);
+		loadSearchTagPanel.add(VIDInput);
+		VIDInput.setColumns(10);
+
+		JLabel lblNewLabel = new JLabel("Enter Video ID");
+		lblNewLabel.setBounds(217, 35, 116, 16);
+		loadSearchTagPanel.add(lblNewLabel);
+
+		JButton btnNewButton = new JButton("Go");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String q = "{? = call dbo.checkVideo(?)}";
+					Connection con = DatabaseConnection.getConnection();
+					CallableStatement ss = con.prepareCall(q);
+					ss.setInt(2, new Integer(VIDInput.getText()));
+					ss.registerOutParameter(1, java.sql.Types.INTEGER);
+					ss.execute();
+					boolean exists = ss.getInt(1) == 0;
+					if (!exists) {
+						JOptionPane.showMessageDialog(frame, "Video doesn't exist");
+						return;
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				frame.getContentPane().removeAll();
+				loadVideoPanel(new Integer(VIDInput.getText()));
+				frame.repaint();
+			}
+		});
+		btnNewButton.setBounds(298, 50, 56, 25);
+		loadSearchTagPanel.add(btnNewButton);
+		
 	}
 
 	private void loadContentPanel(int cid) {
@@ -1100,7 +1219,7 @@ public class Application {
 
 		// get subscribe number
 		SubscribeNumber = new JLabel("");
-		SubscribeNumber.setBounds(526, 114, 56, 16);
+		SubscribeNumber.setBounds(515, 230, 56, 30);
 		panel.add(SubscribeNumber);
 		try {
 			String qc = "Select dbo.getSubNumByContent(?)";
@@ -1113,7 +1232,7 @@ public class Application {
 			e1.printStackTrace();
 		}
 		// back to main page button
-		btnNewButton_1 = new JButton("Back To Main Page");
+		btnNewButton_1 = new JButton("Back");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.getContentPane().removeAll();
@@ -1121,14 +1240,14 @@ public class Application {
 				frame.repaint();
 			}
 		});
-		btnNewButton_1.setBounds(12, 13, 187, 30);
+		btnNewButton_1.setBounds(467, 41, 124, 30);
 		panel.add(btnNewButton_1);
 
 		ResultSet rsomment = null;
 		// show content info based on type
 		ResultSet rs = null;
 		ContentInfoTable = new JTable();
-		ContentInfoTable.setBounds(12, 56, 618, 30);
+		ContentInfoTable.setBounds(0, 101, 642, 62);
 		panel.add(ContentInfoTable);
 		try {
 			String q1 = "Select dbo.getContentType(?)";
@@ -1158,7 +1277,7 @@ public class Application {
 		}
 		// show tags
 		TagTable = new JTable();
-		TagTable.setBounds(51, 256, 121, 146);
+		TagTable.setBounds(78, 191, 193, 199);
 		panel.add(TagTable);
 		try {
 			String qc = "Select Tag from dbo.ContentTag Where ContentID = ?";
@@ -1198,30 +1317,33 @@ public class Application {
 				frame.repaint();
 			}
 		});
-		btnSubscribe.setBounds(390, 152, 108, 47);
+		btnSubscribe.setBounds(380, 292, 108, 30);
 		panel.add(btnSubscribe);
 
 		lblNewLabel_1 = new JLabel("Subscribe# = ");
-		lblNewLabel_1.setBounds(390, 107, 131, 30);
+		lblNewLabel_1.setBounds(380, 230, 131, 30);
 		panel.add(lblNewLabel_1);
+		
+		lblContentDetail = new JLabel("Content Detail");
+		lblContentDetail.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblContentDetail.setBounds(78, 38, 154, 30);
+		panel.add(lblContentDetail);
 
 	}
-	
-	
-	private void loadVideoInfoPanel(String username){
+
+	private void loadVideoInfoPanel(String username) {
 		JPanel VideoInfoPanel = new JPanel();
 		VideoInfoPanel.setBounds(0, 0, 642, 437);
 		frame.getContentPane().add(VideoInfoPanel);
 		VideoInfoPanel.setLayout(null);
-		
+
 		UserVideo_1 = new JTable();
-		UserVideo_1.setBounds(26, 67, 387, 144);
+		UserVideo_1.setBounds(26, 48, 387, 163);
 		VideoInfoPanel.add(UserVideo_1);
-		
-		
+
 		ResultSet rs = null;
 		Connection conn = DatabaseConnection.getConnection();
-		
+
 		Statement st2;
 		try {
 			st2 = conn.createStatement();
@@ -1229,10 +1351,10 @@ public class Application {
 			ResultSet rs2 = null;
 			rs2 = st2.executeQuery(query2);
 			UserVideo_1.setModel(DbUtils.resultSetToTableModel(rs2));
-			
+
 			JLabel lblYourPersonalVideos = new JLabel("Your Personal Videos");
 			lblYourPersonalVideos.setFont(new Font("Tahoma", Font.BOLD, 16));
-			lblYourPersonalVideos.setBounds(26, 38, 182, 16);
+			lblYourPersonalVideos.setBounds(26, 23, 182, 16);
 			VideoInfoPanel.add(lblYourPersonalVideos);
 			{
 				JLabel lblNewLabel_2 = new JLabel(" Video Name");
@@ -1254,27 +1376,27 @@ public class Application {
 				lblUrl.setBounds(285, 224, 56, 16);
 				VideoInfoPanel.add(lblUrl);
 			}
-			
+
 			VName = new JTextField();
 			VName.setBounds(26, 241, 77, 25);
 			VideoInfoPanel.add(VName);
 			VName.setColumns(10);
-			
+
 			VLength = new JTextField();
 			VLength.setBounds(117, 242, 82, 22);
 			VideoInfoPanel.add(VLength);
 			VLength.setColumns(10);
-			
+
 			Category = new JTextField();
 			Category.setBounds(209, 242, 45, 22);
 			VideoInfoPanel.add(Category);
 			Category.setColumns(10);
-			
+
 			Url = new JTextField();
 			Url.setBounds(262, 242, 62, 22);
 			VideoInfoPanel.add(Url);
 			Url.setColumns(10);
-			
+
 			JButton btnUpdate = new JButton("Upload");
 			btnUpdate.setFont(new Font("Tahoma", Font.BOLD, 13));
 			btnUpdate.setBounds(336, 242, 77, 25);
@@ -1286,7 +1408,7 @@ public class Application {
 						String VideoLength = VLength.getText();
 						String CategoryName = Category.getText();
 						String UrlName = Url.getText();
-						
+
 						Connection con = DatabaseConnection.getConnection();
 						String qc = " {? = call dbo.uploadVideo(?,?,?,?,?)}";
 						CallableStatement psc;
@@ -1301,7 +1423,7 @@ public class Application {
 						int sub = psc.getInt(1);
 						if (sub == 0) {
 							JOptionPane.showMessageDialog(frame, "upload successfully");
-						} else  {
+						} else {
 							JOptionPane.showMessageDialog(frame, "something wrong");
 						}
 					} catch (SQLException e1) {
@@ -1314,17 +1436,16 @@ public class Application {
 				}
 			});
 			VideoInfoPanel.add(btnUpdate);
-			
-			
+
 			JLabel lblVideoid = new JLabel("Video ID");
-			lblVideoid.setBounds(33, 386, 56, 16);
+			lblVideoid.setBounds(26, 367, 56, 16);
 			VideoInfoPanel.add(lblVideoid);
-			
+
 			Videoid = new JTextField();
-			Videoid.setBounds(26, 402, 77, 22);
+			Videoid.setBounds(26, 383, 77, 22);
 			VideoInfoPanel.add(Videoid);
 			Videoid.setColumns(10);
-			
+
 			JButton delete = new JButton("Delete");
 			delete.setFont(new Font("Tahoma", Font.BOLD, 13));
 			delete.addActionListener(new ActionListener() {
@@ -1337,12 +1458,12 @@ public class Application {
 						psc = con.prepareCall(qc);
 						psc.registerOutParameter(1, java.sql.Types.INTEGER);
 						psc.setString(2, id);
-						
+
 						psc.execute();
 						int sub = psc.getInt(1);
 						if (sub == 0) {
 							JOptionPane.showMessageDialog(frame, "delete successfully");
-						} else  {
+						} else {
 							JOptionPane.showMessageDialog(frame, "something wrong");
 						}
 					} catch (SQLException e1) {
@@ -1354,9 +1475,9 @@ public class Application {
 					frame.repaint();
 				}
 			});
-			delete.setBounds(117, 401, 82, 25);
+			delete.setBounds(117, 382, 82, 25);
 			VideoInfoPanel.add(delete);
-			
+
 			JButton Back = new JButton("Back");
 			Back.setFont(new Font("Tahoma", Font.BOLD, 13));
 			Back.addActionListener(new ActionListener() {
@@ -1366,66 +1487,66 @@ public class Application {
 					frame.repaint();
 				}
 			});
-			Back.setBounds(432, 382, 97, 25);
+			Back.setBounds(481, 35, 97, 25);
 			VideoInfoPanel.add(Back);
-			
+
 			newVideoID = new JTextField();
-			newVideoID.setBounds(26, 303, 68, 22);
+			newVideoID.setBounds(26, 290, 68, 22);
 			VideoInfoPanel.add(newVideoID);
 			newVideoID.setColumns(10);
-			
+
 			newVideoName = new JTextField();
-			newVideoName.setBounds(107, 303, 101, 22);
+			newVideoName.setBounds(107, 290, 101, 22);
 			VideoInfoPanel.add(newVideoName);
 			newVideoName.setColumns(10);
-			
+
 			newVideoLength = new JTextField();
-			newVideoLength.setBounds(213, 303, 111, 22);
+			newVideoLength.setBounds(213, 290, 111, 22);
 			VideoInfoPanel.add(newVideoLength);
 			newVideoLength.setColumns(10);
-			
+
 			newVideoCategory = new JTextField();
-			newVideoCategory.setBounds(26, 351, 56, 22);
+			newVideoCategory.setBounds(26, 338, 56, 22);
 			VideoInfoPanel.add(newVideoCategory);
 			newVideoCategory.setColumns(10);
-			
+
 			newVideoUrl = new JTextField();
-			newVideoUrl.setBounds(94, 351, 116, 22);
+			newVideoUrl.setBounds(94, 338, 116, 22);
 			VideoInfoPanel.add(newVideoUrl);
 			newVideoUrl.setColumns(10);
-			
+
 			JLabel lblNewLabel_7 = new JLabel("Video ID");
-			lblNewLabel_7.setBounds(26, 285, 56, 16);
+			lblNewLabel_7.setBounds(26, 272, 56, 16);
 			VideoInfoPanel.add(lblNewLabel_7);
-			
+
 			JLabel lblNewName = new JLabel("New Name");
-			lblNewName.setBounds(122, 285, 77, 16);
+			lblNewName.setBounds(122, 272, 77, 16);
 			VideoInfoPanel.add(lblNewName);
-			
+
 			JLabel lblNewLabel_8 = new JLabel("New Length");
-			lblNewLabel_8.setBounds(228, 285, 89, 16);
+			lblNewLabel_8.setBounds(228, 272, 89, 16);
 			VideoInfoPanel.add(lblNewLabel_8);
-			
+
 			JLabel lblNewCategory = new JLabel("Category");
-			lblNewCategory.setBounds(26, 333, 77, 16);
+			lblNewCategory.setBounds(26, 320, 77, 16);
 			VideoInfoPanel.add(lblNewCategory);
-			
+
 			JLabel lblNewUrl = new JLabel(" New Url");
-			lblNewUrl.setBounds(118, 333, 56, 16);
+			lblNewUrl.setBounds(118, 320, 56, 16);
 			VideoInfoPanel.add(lblNewUrl);
-			
+
 			JButton btnUpdate_1 = new JButton("Update");
 			btnUpdate_1.setFont(new Font("Tahoma", Font.BOLD, 13));
 			btnUpdate_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					
+
 					try {
 						String newID = newVideoID.getText();
 						String newLength = newVideoLength.getText();
 						String newName = newVideoName.getText();
 						String newUrl = newVideoUrl.getText();
 						String newCategory = newVideoCategory.getText();
-						
+
 						Connection con = DatabaseConnection.getConnection();
 						String qc = " {? = call dbo.editVideo(?,?,?,?,?)}";
 						CallableStatement psc;
@@ -1436,12 +1557,12 @@ public class Application {
 						psc.setString(4, newLength);
 						psc.setString(5, newCategory);
 						psc.setString(6, newUrl);
-						
+
 						psc.execute();
 						int sub = psc.getInt(1);
 						if (sub == 0) {
 							JOptionPane.showMessageDialog(frame, "Edit successfully");
-						} else  {
+						} else {
 							JOptionPane.showMessageDialog(frame, "something wrong");
 						}
 					} catch (SQLException e1) {
@@ -1453,99 +1574,97 @@ public class Application {
 					frame.repaint();
 				}
 			});
-			btnUpdate_1.setBounds(228, 350, 92, 25);
+			btnUpdate_1.setBounds(228, 337, 92, 25);
 			VideoInfoPanel.add(btnUpdate_1);
-			
+
 			JLabel lblNewLabel_9 = new JLabel("Category - Category Number");
 			lblNewLabel_9.setFont(new Font("Tahoma", Font.BOLD, 13));
-			lblNewLabel_9.setBounds(429, 13, 201, 16);
+			lblNewLabel_9.setBounds(429, 67, 201, 16);
 			VideoInfoPanel.add(lblNewLabel_9);
-			
+
 			JLabel lblNewLabel_10 = new JLabel("Miscellaneous - 0");
-			lblNewLabel_10.setBounds(439, 40, 153, 16);
+			lblNewLabel_10.setBounds(443, 87, 153, 16);
 			VideoInfoPanel.add(lblNewLabel_10);
-			
+
 			JLabel lblNewLabel_11 = new JLabel("Cars & Vehicles - 1");
-			lblNewLabel_11.setBounds(439, 60, 153, 16);
+			lblNewLabel_11.setBounds(443, 107, 153, 16);
 			VideoInfoPanel.add(lblNewLabel_11);
-			
+
 			JLabel lblNewLabel_12 = new JLabel("Comedy - 2");
-			lblNewLabel_12.setBounds(439, 80, 182, 16);
+			lblNewLabel_12.setBounds(443, 127, 182, 16);
 			VideoInfoPanel.add(lblNewLabel_12);
-			
+
 			JLabel lblNewLabel_13 = new JLabel("Education - 3");
-			lblNewLabel_13.setBounds(439, 100, 168, 16);
+			lblNewLabel_13.setBounds(443, 147, 168, 16);
 			VideoInfoPanel.add(lblNewLabel_13);
-			
+
 			JLabel lblNewLabel_14 = new JLabel("Entertainment - 4");
-			lblNewLabel_14.setBounds(439, 120, 139, 16);
+			lblNewLabel_14.setBounds(443, 167, 139, 16);
 			VideoInfoPanel.add(lblNewLabel_14);
-			
+
 			JLabel lblNewLabel_15 = new JLabel("Gaming - 6");
-			lblNewLabel_15.setBounds(439, 160, 116, 16);
+			lblNewLabel_15.setBounds(443, 207, 116, 16);
 			VideoInfoPanel.add(lblNewLabel_15);
-			
+
 			JLabel lblNewLabel_16 = new JLabel("Film & Animation - 5");
-			lblNewLabel_16.setBounds(439, 140, 153, 16);
+			lblNewLabel_16.setBounds(443, 187, 153, 16);
 			VideoInfoPanel.add(lblNewLabel_16);
-			
+
 			JLabel lblNewLabel_17 = new JLabel("How-to & Style - 7");
-			lblNewLabel_17.setBounds(439, 180, 116, 16);
+			lblNewLabel_17.setBounds(443, 227, 116, 16);
 			VideoInfoPanel.add(lblNewLabel_17);
-			
+
 			JLabel lblNewLabel_18 = new JLabel("Music - 8");
-			lblNewLabel_18.setBounds(439, 200, 116, 16);
+			lblNewLabel_18.setBounds(443, 247, 116, 16);
 			VideoInfoPanel.add(lblNewLabel_18);
-			
+
 			JLabel lblNewLabel_19 = new JLabel("News & Politics - 9");
-			lblNewLabel_19.setBounds(439, 220, 139, 16);
+			lblNewLabel_19.setBounds(443, 267, 139, 16);
 			VideoInfoPanel.add(lblNewLabel_19);
-			
+
 			JLabel lblNewLabel_20 = new JLabel("Non-profits & Activism - 10");
-			lblNewLabel_20.setBounds(439, 240, 168, 16);
+			lblNewLabel_20.setBounds(443, 287, 168, 16);
 			VideoInfoPanel.add(lblNewLabel_20);
-			
+
 			JLabel lblNewLabel_21 = new JLabel("People & Blogs - 11");
-			lblNewLabel_21.setBounds(439, 260, 153, 16);
+			lblNewLabel_21.setBounds(443, 307, 153, 16);
 			VideoInfoPanel.add(lblNewLabel_21);
-			
+
 			JLabel lblNewLabel_22 = new JLabel("Pets & Animals - 12");
-			lblNewLabel_22.setBounds(439, 280, 116, 16);
+			lblNewLabel_22.setBounds(443, 327, 116, 16);
 			VideoInfoPanel.add(lblNewLabel_22);
-			
+
 			JLabel lblNewLabel_23 = new JLabel("Science & Technology - 13");
-			lblNewLabel_23.setBounds(439, 300, 168, 16);
+			lblNewLabel_23.setBounds(443, 347, 168, 16);
 			VideoInfoPanel.add(lblNewLabel_23);
-			
+
 			JLabel lblNewLabel_24 = new JLabel("Sport - 14");
-			lblNewLabel_24.setBounds(439, 320, 116, 16);
+			lblNewLabel_24.setBounds(443, 367, 116, 16);
 			VideoInfoPanel.add(lblNewLabel_24);
-			
+
 			JLabel lblNewLabel_25 = new JLabel("Travel & Events - 15");
-			lblNewLabel_25.setBounds(439, 340, 153, 16);
+			lblNewLabel_25.setBounds(443, 387, 153, 16);
 			VideoInfoPanel.add(lblNewLabel_25);
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
-	private void loadContentInfoPanel(String username){
+	private void loadContentInfoPanel(String username) {
 		JPanel ContentInfoPanel = new JPanel();
 		ContentInfoPanel.setBounds(0, 0, 642, 437);
 		frame.getContentPane().add(ContentInfoPanel);
 		ContentInfoPanel.setLayout(null);
-		
+
 		PersonalContent = new JTable();
-		PersonalContent.setBounds(70, 87, 479, 153);
+		PersonalContent.setBounds(59, 67, 520, 190);
 		ContentInfoPanel.add(PersonalContent);
-		
-		
-		
+
 		ResultSet rs = null;
 		Connection conn = DatabaseConnection.getConnection();
-		
+
 		Statement st3;
 		try {
 			st3 = conn.createStatement();
@@ -1553,42 +1672,42 @@ public class Application {
 			ResultSet rs3 = null;
 			rs3 = st3.executeQuery(query3);
 			PersonalContent.setModel(DbUtils.resultSetToTableModel(rs3));
-			
+
 			lblPersonalContent = new JLabel("Personal Content");
 			lblPersonalContent.setFont(new Font("Tahoma", Font.BOLD, 16));
-			lblPersonalContent.setBounds(49, 47, 229, 16);
+			lblPersonalContent.setBounds(49, 33, 229, 16);
 			ContentInfoPanel.add(lblPersonalContent);
-			
+
 			Back = new JButton("Back");
 			Back.setFont(new Font("Tahoma", Font.BOLD, 13));
 			Back.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					frame.getContentPane().removeAll();
 					loadUserInfoPanel();
-					frame.repaint();	
+					frame.repaint();
 				}
 			});
-			Back.setBounds(487, 43, 97, 25);
+			Back.setBounds(497, 30, 97, 25);
 			ContentInfoPanel.add(Back);
-			
+
 			lblContentname = new JLabel("Content Name");
-			lblContentname.setBounds(49, 283, 102, 16);
+			lblContentname.setBounds(49, 270, 102, 16);
 			ContentInfoPanel.add(lblContentname);
-			
+
 			lblContentUrl = new JLabel("Content URL");
-			lblContentUrl.setBounds(192, 283, 118, 16);
+			lblContentUrl.setBounds(185, 270, 118, 16);
 			ContentInfoPanel.add(lblContentUrl);
-			
+
 			Cname = new JTextField();
-			Cname.setBounds(40, 302, 116, 22);
+			Cname.setBounds(49, 289, 116, 22);
 			ContentInfoPanel.add(Cname);
 			Cname.setColumns(10);
-			
+
 			Curl = new JTextField();
-			Curl.setBounds(176, 302, 116, 22);
+			Curl.setBounds(185, 289, 116, 22);
 			ContentInfoPanel.add(Curl);
 			Curl.setColumns(10);
-			
+
 			btnCreateContent = new JButton("Create Content");
 			btnCreateContent.setFont(new Font("Tahoma", Font.BOLD, 13));
 			btnCreateContent.addActionListener(new ActionListener() {
@@ -1596,7 +1715,7 @@ public class Application {
 					try {
 						String CName = Cname.getText();
 						String CUrl = Curl.getText();
-						
+
 						Connection con = DatabaseConnection.getConnection();
 						String qc = " {? = call dbo.createContent(?,?,?)}";
 						CallableStatement psc;
@@ -1609,7 +1728,7 @@ public class Application {
 						int sub = psc.getInt(1);
 						if (sub == 0) {
 							JOptionPane.showMessageDialog(frame, "Create content successfully");
-						} else  {
+						} else {
 							JOptionPane.showMessageDialog(frame, "something wrong");
 						}
 					} catch (SQLException e1) {
@@ -1619,28 +1738,28 @@ public class Application {
 					frame.getContentPane().removeAll();
 					loadContentInfoPanel(username);
 					frame.repaint();
-					
+
 				}
 			});
-			btnCreateContent.setBounds(377, 301, 155, 25);
+			btnCreateContent.setBounds(386, 288, 155, 25);
 			ContentInfoPanel.add(btnCreateContent);
-			
+
 			lblContentId = new JLabel(" Content ID");
-			lblContentId.setBounds(50, 384, 79, 16);
+			lblContentId.setBounds(49, 371, 79, 16);
 			ContentInfoPanel.add(lblContentId);
-			
+
 			Contentid = new JTextField();
-			Contentid.setBounds(40, 402, 116, 22);
+			Contentid.setBounds(49, 389, 116, 22);
 			ContentInfoPanel.add(Contentid);
 			Contentid.setColumns(10);
-			
+
 			btnDeleteContent = new JButton("Delete Content");
 			btnDeleteContent.setFont(new Font("Tahoma", Font.BOLD, 13));
 			btnDeleteContent.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						String Cid = Contentid.getText();
-						
+
 						Connection con = DatabaseConnection.getConnection();
 						String qc = " {? = call dbo.deleteContent(?)}";
 						CallableStatement psc;
@@ -1651,7 +1770,7 @@ public class Application {
 						int sub = psc.getInt(1);
 						if (sub == 0) {
 							JOptionPane.showMessageDialog(frame, "Delete content successfully");
-						} else  {
+						} else {
 							JOptionPane.showMessageDialog(frame, "something wrong");
 						}
 					} catch (SQLException e1) {
@@ -1661,36 +1780,35 @@ public class Application {
 					frame.getContentPane().removeAll();
 					loadContentInfoPanel(username);
 					frame.repaint();
-					
-					
+
 				}
 			});
-			btnDeleteContent.setBounds(176, 401, 155, 25);
+			btnDeleteContent.setBounds(185, 388, 155, 25);
 			ContentInfoPanel.add(btnDeleteContent);
-			
+
 			lblNewLabel_5 = new JLabel("  New URL");
-			lblNewLabel_5.setBounds(262, 337, 118, 16);
+			lblNewLabel_5.setBounds(254, 324, 118, 16);
 			ContentInfoPanel.add(lblNewLabel_5);
-			
+
 			lblNewContentName = new JLabel("New Content Name");
-			lblNewContentName.setBounds(121, 337, 114, 16);
+			lblNewContentName.setBounds(130, 324, 114, 16);
 			ContentInfoPanel.add(lblNewContentName);
-			
+
 			newUrl = new JTextField();
-			newUrl.setBounds(247, 353, 116, 22);
+			newUrl.setBounds(256, 340, 116, 22);
 			ContentInfoPanel.add(newUrl);
 			newUrl.setColumns(10);
-			
+
 			newName = new JTextField();
-			newName.setBounds(119, 353, 116, 22);
+			newName.setBounds(128, 340, 116, 22);
 			ContentInfoPanel.add(newName);
 			newName.setColumns(10);
-			
+
 			btnNewButton_4 = new JButton("Edit Content");
 			btnNewButton_4.setFont(new Font("Tahoma", Font.BOLD, 13));
 			btnNewButton_4.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					
+
 					try {
 						String id = contentID.getText();
 						String nName = newName.getText();
@@ -1707,7 +1825,7 @@ public class Application {
 						int sub = psc.getInt(1);
 						if (sub == 0) {
 							JOptionPane.showMessageDialog(frame, "Edit content successfully");
-						} else  {
+						} else {
 							JOptionPane.showMessageDialog(frame, "something wrong");
 						}
 					} catch (SQLException e1) {
@@ -1719,23 +1837,23 @@ public class Application {
 					frame.repaint();
 				}
 			});
-			btnNewButton_4.setBounds(378, 352, 154, 25);
+			btnNewButton_4.setBounds(387, 339, 154, 25);
 			ContentInfoPanel.add(btnNewButton_4);
-			
+
 			contentID = new JTextField();
-			contentID.setBounds(40, 353, 67, 22);
+			contentID.setBounds(49, 340, 67, 22);
 			ContentInfoPanel.add(contentID);
 			contentID.setColumns(10);
-			
+
 			lblNewLabel_6 = new JLabel(" Content ID");
-			lblNewLabel_6.setBounds(40, 337, 69, 16);
+			lblNewLabel_6.setBounds(49, 324, 69, 16);
 			ContentInfoPanel.add(lblNewLabel_6);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -1746,18 +1864,19 @@ public class Application {
 		frame.getContentPane().setLayout(null);
 
 		loadLoginPanel();
-		//loadContentPanel(1);
-		// loadVideoPanel(1);
-		// loadRegisterPanel();
-		// loadMainPanel();
-		// loadUserInfoPanel();
-		//loadVideoInfoPanel(username);
-		//loadContentInfoPanel(username);
-		// loadSearchPanel();
+//		loadContentPanel(1);
+//		loadVideoPanel(1);
+//		loadRegisterPanel();
+//		loadMainPanel();
+//		loadUserInfoPanel();
+//		loadVideoInfoPanel(username);
+//		loadContentInfoPanel(username);
+//		loadSearchPanel();
 
-		// ResultSet rs = null;
-		// loadSearchVideoPanel(rs);
-		// loadSearchContentPanel(rs);
-		// loadSearchUserPanel(rs);
+//		ResultSet rs = null;
+//		loadSearchVideoPanel(rs);
+//		loadSearchContentPanel(rs);
+//		loadSearchUserPanel(rs);
+//		loadSearchTagPanel(rs);
 	}
 }
