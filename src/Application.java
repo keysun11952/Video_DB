@@ -623,12 +623,12 @@ public class Application {
 		txtContent.setBounds(68, 196, 342, 30);
 		SearchPanel.add(txtContent);
 		txtContent.setColumns(10);
-		
+
 		txtTag = new JTextField();
 		txtTag.setColumns(10);
 		txtTag.setBounds(68, 332, 342, 30);
 		SearchPanel.add(txtTag);
-		
+
 		JButton btnSearchTag = new JButton("Search Tag");
 		btnSearchTag.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -723,7 +723,7 @@ public class Application {
 		});
 		btnBack.setBounds(422, 63, 135, 30);
 		SearchPanel.add(btnBack);
-		
+
 	}
 
 	private void loadSearchVideoPanel(ResultSet rs) {
@@ -1046,19 +1046,36 @@ public class Application {
 				String q = "{? = Call dbo.donateMoney(?,?,?)}";
 				CallableStatement cs;
 				try {
-					cs = conn.prepareCall(q);
-					cs.setInt(2, uid);
 					CallableStatement ps = conn.prepareCall("{? = call dbo.getUIDfromVID(?)}");
 					ps.setInt(2, vid);
 					ps.registerOutParameter(1, java.sql.Types.INTEGER);
 					ps.execute();
 					Integer cid = ps.getInt(1);
+					cs = conn.prepareCall(q);
+					cs.setInt(2, uid);
 					cs.setInt(3, cid);
-					cs.setInt(4, new Integer(DonateInput.getText()));
+					try {
+						cs.setInt(4, new Integer(DonateInput.getText()));
+					} catch (Exception e2) {
+						JOptionPane.showMessageDialog(frame, "Donate amount nust be integer");
+						frame.getContentPane().removeAll();
+						loadVideoPanel(vid);
+						frame.repaint();
+						return;
+					}
+					if (DonateInput.getText().isEmpty())
+						return;
 					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.execute();
 					int r = cs.getInt(1);
-					if (r == 4)
+					if (r == 4) {
+						JOptionPane.showMessageDialog(frame, "Donate amount must be positive");
+						frame.getContentPane().removeAll();
+						loadVideoPanel(vid);
+						frame.repaint();
+						return;
+					}
+					if (r != 0)
 						JOptionPane.showMessageDialog(frame, "Donate failed");
 					else
 						JOptionPane.showMessageDialog(frame, "Donate succeed");
@@ -1072,7 +1089,7 @@ public class Application {
 		});
 		btnNewButton_3.setBounds(462, 356, 97, 25);
 		panel.add(btnNewButton_3);
-		
+
 		JLabel lblVideoDetail = new JLabel("Video Detail");
 		lblVideoDetail.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblVideoDetail.setBounds(51, 27, 139, 30);
@@ -1135,7 +1152,7 @@ public class Application {
 		loadSearchUserPanel.add(btnSearchTag);
 
 	}
-	
+
 	private void loadSearchTagPanel(ResultSet rs) {
 
 		JPanel loadSearchTagPanel = new JPanel();
@@ -1224,7 +1241,7 @@ public class Application {
 		});
 		btnNewButton.setBounds(298, 50, 56, 25);
 		loadSearchTagPanel.add(btnNewButton);
-		
+
 	}
 
 	private void loadContentPanel(int cid) {
@@ -1340,7 +1357,7 @@ public class Application {
 		lblNewLabel_1 = new JLabel("Subscribe# = ");
 		lblNewLabel_1.setBounds(380, 230, 131, 30);
 		panel.add(lblNewLabel_1);
-		
+
 		lblContentDetail = new JLabel("Content Detail");
 		lblContentDetail.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblContentDetail.setBounds(78, 38, 154, 30);
