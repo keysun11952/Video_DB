@@ -1031,23 +1031,28 @@ public class Application {
 		btnNewButton_3 = new JButton("Donate");
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String q = "{Call dbo.donateMoney(?,?,?)}";
+				String q = "{? = Call dbo.donateMoney(?,?,?)}";
 				CallableStatement cs;
 				try {
 					cs = conn.prepareCall(q);
-					cs.setInt(1, uid);
+					cs.setInt(2, uid);
 					CallableStatement ps = conn.prepareCall("{? = call dbo.getUIDfromVID(?)}");
 					ps.setInt(2, vid);
 					ps.registerOutParameter(1, java.sql.Types.INTEGER);
 					ps.execute();
 					Integer cid = ps.getInt(1);
-					cs.setInt(2, cid);
-					cs.setInt(3, new Integer(DonateInput.getText()));
+					cs.setInt(3, cid);
+					cs.setInt(4, new Integer(DonateInput.getText()));
+					cs.registerOutParameter(1, java.sql.Types.INTEGER);
 					cs.execute();
+					int r = cs.getInt(1);
+					if (r == 4)
+						JOptionPane.showMessageDialog(frame, "Donate failed");
+					else
+						JOptionPane.showMessageDialog(frame, "Donate succeed");
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
-				JOptionPane.showMessageDialog(frame, "Donate succeed");
 				frame.getContentPane().removeAll();
 				loadVideoPanel(vid);
 				frame.repaint();
