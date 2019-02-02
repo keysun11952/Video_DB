@@ -469,6 +469,10 @@ public class Application {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String newpass = JOptionPane.showInputDialog(frame, "Enter new password: ");
+					if (newpass.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Password can not be empty");
+						return;
+					}
 					byte[] salt = us.getNewSalt();
 					String hash = us.hashPassword(salt, newpass);
 					Connection con = DatabaseConnection.getConnection();
@@ -489,7 +493,7 @@ public class Application {
 						frame.repaint();
 					}
 				} catch (SQLException e1) {
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Can not change password");
 				}
 			}
 		});
@@ -501,6 +505,10 @@ public class Application {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String newdob = JOptionPane.showInputDialog(frame, "Enter new birthday: ");
+					if (newdob.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Birthday can not be empty");
+						return;
+					}
 					Connection con = DatabaseConnection.getConnection();
 					CallableStatement change = con.prepareCall("{? = call changeDOB(?,?)}");
 					change.setString(2, username);
@@ -516,7 +524,7 @@ public class Application {
 					loadUserInfoPanel();
 					frame.repaint();
 				} catch (SQLException e1) {
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Birthday not in valid format");
 				}
 			}
 		});
@@ -528,6 +536,10 @@ public class Application {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String newemail = JOptionPane.showInputDialog(frame, "Enter new email: ");
+					if (newemail.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Email can not be empty");
+						return;
+					}
 					Connection con = DatabaseConnection.getConnection();
 					CallableStatement change = con.prepareCall("{? = call changeEmail(?,?)}");
 					change.setString(2, username);
@@ -543,7 +555,7 @@ public class Application {
 					loadUserInfoPanel();
 					frame.repaint();
 				} catch (SQLException e1) {
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Email already exist");
 				}
 			}
 		});

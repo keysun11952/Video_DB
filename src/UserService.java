@@ -67,6 +67,10 @@ public class UserService {
 	public boolean register(String username, String password, String dob, String email) {
 		//DONE: Task 6
 		try {
+			if(password.isEmpty() || username.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Username or password can not be empty");
+				return false;
+			}
 			byte[] salt = this.getNewSalt();
 			String hash = this.hashPassword(salt, password);
 			Connection con = this.dbService.getConnection();
