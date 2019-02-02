@@ -46,11 +46,11 @@ public class Application {
 	private JTextField txtVideo;
 	private JTextField txtContent;
 	private JButton btnSearchTag;
-	private JButton btnSearchVideo;
+	private JButton btnSearchUser;
 	private JButton btnSearchContent;
 	private JButton btnBack;
 	private JTable table;
-	private JTextField VIDInput;
+	private JTextField userInput;
 	private JButton btnNewButton_1;
 	private JTable ContentInfoTable;
 	private JTable CommentTable;
@@ -341,10 +341,10 @@ public class Application {
 			btnSearch.setBounds(493, 382, 97, 25);
 			MainPanel.add(btnSearch);
 
-			VIDInput = new JTextField();
-			VIDInput.setBounds(76, 383, 81, 22);
-			MainPanel.add(VIDInput);
-			VIDInput.setColumns(10);
+			userInput = new JTextField();
+			userInput.setBounds(76, 383, 81, 22);
+			MainPanel.add(userInput);
+			userInput.setColumns(10);
 
 			JLabel lblNewLabel = new JLabel("Enter Video ID");
 			lblNewLabel.setBounds(76, 369, 116, 16);
@@ -356,7 +356,7 @@ public class Application {
 					try {
 						String q = "{? = call dbo.checkVideo(?)}";
 						CallableStatement ss = conn.prepareCall(q);
-						ss.setInt(2, new Integer(VIDInput.getText()));
+						ss.setInt(2, new Integer(userInput.getText()));
 						ss.registerOutParameter(1, java.sql.Types.INTEGER);
 						ss.execute();
 						boolean exists = ss.getInt(1) == 0;
@@ -368,7 +368,7 @@ public class Application {
 						e1.printStackTrace();
 					}
 					frame.getContentPane().removeAll();
-					loadVideoPanel(new Integer(VIDInput.getText()));
+					loadVideoPanel(new Integer(userInput.getText()));
 					frame.repaint();
 				}
 			});
@@ -671,8 +671,8 @@ public class Application {
 		btnSearchTag.setBounds(422, 263, 135, 30);
 		SearchPanel.add(btnSearchTag);
 
-		btnSearchVideo = new JButton("Search Video");
-		btnSearchVideo.addActionListener(new ActionListener() {
+		btnSearchUser = new JButton("Search Video");
+		btnSearchUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String video = txtVideo.getText();
@@ -689,8 +689,8 @@ public class Application {
 				}
 			}
 		});
-		btnSearchVideo.setBounds(422, 125, 135, 30);
-		SearchPanel.add(btnSearchVideo);
+		btnSearchUser.setBounds(422, 125, 135, 30);
+		SearchPanel.add(btnSearchUser);
 
 		btnSearchContent = new JButton("Search Content");
 		btnSearchContent.addActionListener(new ActionListener() {
@@ -760,8 +760,8 @@ public class Application {
 		txtVideo.setColumns(10);
 
 		Connection con = DatabaseConnection.getConnection();
-		btnSearchVideo = new JButton("Search Video");
-		btnSearchVideo.addActionListener(new ActionListener() {
+		btnSearchUser = new JButton("Search Video");
+		btnSearchUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String video = txtVideo.getText();
@@ -777,13 +777,13 @@ public class Application {
 				}
 			}
 		});
-		btnSearchVideo.setBounds(439, 381, 135, 25);
-		loadSearchVideoPanel.add(btnSearchVideo);
+		btnSearchUser.setBounds(439, 381, 135, 25);
+		loadSearchVideoPanel.add(btnSearchUser);
 
-		VIDInput = new JTextField();
-		VIDInput.setBounds(217, 51, 81, 22);
-		loadSearchVideoPanel.add(VIDInput);
-		VIDInput.setColumns(10);
+		userInput = new JTextField();
+		userInput.setBounds(217, 51, 81, 22);
+		loadSearchVideoPanel.add(userInput);
+		userInput.setColumns(10);
 
 		JLabel lblNewLabel = new JLabel("Enter Video ID");
 		lblNewLabel.setBounds(217, 35, 116, 16);
@@ -795,7 +795,7 @@ public class Application {
 				try {
 					String q = "{? = call dbo.checkVideo(?)}";
 					CallableStatement ss = con.prepareCall(q);
-					ss.setInt(2, new Integer(VIDInput.getText()));
+					ss.setInt(2, new Integer(userInput.getText()));
 					ss.registerOutParameter(1, java.sql.Types.INTEGER);
 					ss.execute();
 					boolean exists = ss.getInt(1) == 0;
@@ -807,7 +807,7 @@ public class Application {
 					e1.printStackTrace();
 				}
 				frame.getContentPane().removeAll();
-				loadVideoPanel(new Integer(VIDInput.getText()));
+				loadVideoPanel(new Integer(userInput.getText()));
 				frame.repaint();
 			}
 		});
@@ -1150,6 +1150,26 @@ public class Application {
 		});
 		btnSearchTag.setBounds(439, 381, 135, 25);
 		loadSearchUserPanel.add(btnSearchTag);
+		
+		userInput = new JTextField();
+		userInput.setBounds(217, 51, 81, 22);
+		loadSearchUserPanel.add(userInput);
+		userInput.setColumns(10);
+
+		JLabel lblNewLabel = new JLabel("Enter Username");
+		lblNewLabel.setBounds(217, 35, 116, 16);
+		loadSearchUserPanel.add(lblNewLabel);
+
+		JButton btnNewButton = new JButton("Go");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				loadUserVideoPanel(userInput.getText());
+				frame.repaint();
+			}
+		});
+		btnNewButton.setBounds(298, 50, 56, 25);
+		loadSearchUserPanel.add(btnNewButton);
 
 	}
 
@@ -1207,10 +1227,10 @@ public class Application {
 		btnSearchTag.setBounds(439, 381, 135, 25);
 		loadSearchTagPanel.add(btnSearchTag);
 
-		VIDInput = new JTextField();
-		VIDInput.setBounds(217, 51, 81, 22);
-		loadSearchTagPanel.add(VIDInput);
-		VIDInput.setColumns(10);
+		userInput = new JTextField();
+		userInput.setBounds(217, 51, 81, 22);
+		loadSearchTagPanel.add(userInput);
+		userInput.setColumns(10);
 
 		JLabel lblNewLabel = new JLabel("Enter Video ID");
 		lblNewLabel.setBounds(217, 35, 116, 16);
@@ -1223,7 +1243,7 @@ public class Application {
 					String q = "{? = call dbo.checkVideo(?)}";
 					Connection con = DatabaseConnection.getConnection();
 					CallableStatement ss = con.prepareCall(q);
-					ss.setInt(2, new Integer(VIDInput.getText()));
+					ss.setInt(2, new Integer(userInput.getText()));
 					ss.registerOutParameter(1, java.sql.Types.INTEGER);
 					ss.execute();
 					boolean exists = ss.getInt(1) == 0;
@@ -1235,7 +1255,7 @@ public class Application {
 					e1.printStackTrace();
 				}
 				frame.getContentPane().removeAll();
-				loadVideoPanel(new Integer(VIDInput.getText()));
+				loadVideoPanel(new Integer(userInput.getText()));
 				frame.repaint();
 			}
 		});
@@ -1396,7 +1416,7 @@ public class Application {
 				VideoInfoPanel.add(lblNewLabel_2);
 			}
 			{
-				JLabel lblNewLabel_3 = new JLabel("   Video Length");
+				JLabel lblNewLabel_3 = new JLabel("  Video Length");
 				lblNewLabel_3.setBounds(107, 224, 101, 16);
 				VideoInfoPanel.add(lblNewLabel_3);
 			}
@@ -1885,7 +1905,107 @@ public class Application {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
 
+	private void loadUserVideoPanel(String user) {
+
+		JPanel userVideoPanel = new JPanel();
+		userVideoPanel.setBounds(0, 0, 642, 437);
+		frame.getContentPane().add(userVideoPanel);
+		userVideoPanel.setLayout(null);
+
+		JLabel lblVideo = new JLabel("Video Uploaded By " + user);
+		lblVideo.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblVideo.setBounds(62, 38, 260, 25);
+		userVideoPanel.add(lblVideo);
+
+		table = new JTable();
+		table.setBounds(62, 109, 512, 271);
+		userVideoPanel.add(table);
+
+		try {
+			ResultSet rs = null;
+			Connection conn = DatabaseConnection.getConnection();
+			String query = "SELECT * From getVideoByUser(?)";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, user);
+			rs = stmt.executeQuery();
+			table.setModel(DbUtils.resultSetToTableModel(rs));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+
+		btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				loadSearchPanel();
+				frame.repaint();
+			}
+		});
+		btnBack.setBounds(439, 38, 135, 25);
+		userVideoPanel.add(btnBack);
+
+		txtUser = new JTextField();
+		txtUser.setBounds(62, 393, 365, 22);
+		userVideoPanel.add(txtUser);
+		txtUser.setColumns(10);
+
+		Connection con = DatabaseConnection.getConnection();
+		btnSearchUser = new JButton("Search User");
+		btnSearchUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String user = txtUser.getText();
+					Connection con = DatabaseConnection.getConnection();
+					String query = "Select * From searchUser (?)";
+					PreparedStatement search = con.prepareStatement(query);
+					search.setString(1, user);
+					ResultSet rs = search.executeQuery();
+					frame.getContentPane().removeAll();
+					loadSearchUserPanel(rs);
+					frame.repaint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSearchUser.setBounds(439, 392, 135, 25);
+		userVideoPanel.add(btnSearchUser);
+
+		userInput = new JTextField();
+		userInput.setBounds(425, 72, 81, 22);
+		userVideoPanel.add(userInput);
+		userInput.setColumns(10);
+
+		JLabel lblNewLabel = new JLabel("Enter Video ID");
+		lblNewLabel.setBounds(333, 75, 94, 16);
+		userVideoPanel.add(lblNewLabel);
+
+		JButton btnNewButton = new JButton("Go");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String q = "{? = call dbo.checkVideo(?)}";
+					CallableStatement ss = con.prepareCall(q);
+					ss.setInt(2, new Integer(userInput.getText()));
+					ss.registerOutParameter(1, java.sql.Types.INTEGER);
+					ss.execute();
+					boolean exists = ss.getInt(1) == 0;
+					if (!exists) {
+						JOptionPane.showMessageDialog(frame, "Video doesn't exist");
+						return;
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				frame.getContentPane().removeAll();
+				loadVideoPanel(new Integer(userInput.getText()));
+				frame.repaint();
+			}
+		});
+		btnNewButton.setBounds(518, 71, 56, 25);
+		userVideoPanel.add(btnNewButton);
 	}
 
 	/**
@@ -1908,6 +2028,7 @@ public class Application {
 //		loadSearchPanel();
 
 //		ResultSet rs = null;
+//		loadUserVideoPanel(null);
 //		loadSearchVideoPanel(rs);
 //		loadSearchContentPanel(rs);
 //		loadSearchUserPanel(rs);
