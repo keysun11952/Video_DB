@@ -125,7 +125,7 @@ public class Application {
 	}
 
 	private void setUp() {
-		File file = new File("src/setting");
+		File file = new File("Video_DB/src/setting");
 		Scanner scanner = null;
 		try {
 			scanner = new Scanner(file);
@@ -1416,7 +1416,7 @@ public class Application {
 				VideoInfoPanel.add(lblNewLabel_2);
 			}
 			{
-				JLabel lblNewLabel_3 = new JLabel("  Video Length");
+				JLabel lblNewLabel_3 = new JLabel("   Video Length");
 				lblNewLabel_3.setBounds(107, 224, 101, 16);
 				VideoInfoPanel.add(lblNewLabel_3);
 			}
@@ -1462,7 +1462,22 @@ public class Application {
 						String VideoLength = VLength.getText();
 						String CategoryName = Category.getText();
 						String UrlName = Url.getText();
-
+						if(VideoName.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Upload failed. You must enter a Name");
+							frame.getContentPane().removeAll();
+							loadVideoInfoPanel(username);
+							frame.repaint();
+						}else if(VideoLength.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Upload failed. You must enter a length");
+							frame.getContentPane().removeAll();
+							loadVideoInfoPanel(username);
+							frame.repaint();
+						}else if(CategoryName.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Upload failed. You must enter a Category");
+							frame.getContentPane().removeAll();
+							loadVideoInfoPanel(username);
+							frame.repaint();
+						}else{
 						Connection con = DatabaseConnection.getConnection();
 						String qc = " {? = call dbo.uploadVideo(?,?,?,?,?)}";
 						CallableStatement psc;
@@ -1476,17 +1491,18 @@ public class Application {
 						psc.execute();
 						int sub = psc.getInt(1);
 						if (sub == 0) {
-							JOptionPane.showMessageDialog(frame, "upload successfully");
-						} else {
-							JOptionPane.showMessageDialog(frame, "something wrong");
+							JOptionPane.showMessageDialog(frame, "Upload successfully");
+						} if(sub == 2) {
+							JOptionPane.showMessageDialog(frame, "Upload failed. Category not exists");
+						}
 						}
 					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(frame, "something wrong");
-						e1.printStackTrace();
+						JOptionPane.showMessageDialog(frame, "Upload failed. Video Length must be time style. Video Category must be integer");
 					}
 					frame.getContentPane().removeAll();
 					loadVideoInfoPanel(username);
 					frame.repaint();
+					
 				}
 			});
 			VideoInfoPanel.add(btnUpdate);
@@ -1517,12 +1533,12 @@ public class Application {
 						int sub = psc.getInt(1);
 						if (sub == 0) {
 							JOptionPane.showMessageDialog(frame, "delete successfully");
-						} else {
-							JOptionPane.showMessageDialog(frame, "something wrong");
+						} else if(sub == 0){
+						}else{
+							JOptionPane.showMessageDialog(frame, "VideoID cannot be found");
 						}
 					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(frame, "something wrong");
-						e1.printStackTrace();
+						JOptionPane.showMessageDialog(frame, "Upload failed. VideoID must be an integer");
 					}
 					frame.getContentPane().removeAll();
 					loadVideoInfoPanel(username);
@@ -1600,7 +1616,15 @@ public class Application {
 						String newName = newVideoName.getText();
 						String newUrl = newVideoUrl.getText();
 						String newCategory = newVideoCategory.getText();
-
+						if(newID.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Edit failed. You must enter a ID");
+						}else if(newLength.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Edit failed. You must enter a Length");
+						}else if(newName.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Edit failed. You must enter a name");
+						}else if(newCategory.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Edit failed. You must enter a Category");
+						}else{
 						Connection con = DatabaseConnection.getConnection();
 						String qc = " {? = call dbo.editVideo(?,?,?,?,?)}";
 						CallableStatement psc;
@@ -1611,17 +1635,18 @@ public class Application {
 						psc.setString(4, newLength);
 						psc.setString(5, newCategory);
 						psc.setString(6, newUrl);
-
 						psc.execute();
 						int sub = psc.getInt(1);
 						if (sub == 0) {
 							JOptionPane.showMessageDialog(frame, "Edit successfully");
-						} else {
-							JOptionPane.showMessageDialog(frame, "something wrong");
+						} else if(sub == 2){
+							JOptionPane.showMessageDialog(frame, "Edit failed. Invalid category");
+						}else if(sub == 3){
+							JOptionPane.showMessageDialog(frame, "Edit failed. Video doesn't exists");
 						}
-					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(frame, "something wrong");
-						e1.printStackTrace();
+						}
+						} catch (SQLException e1) {
+							JOptionPane.showMessageDialog(frame, "Edit failed. VideoID must be integer. Length must be time style. Category must be integer");
 					}
 					frame.getContentPane().removeAll();
 					loadVideoInfoPanel(username);
@@ -1704,6 +1729,9 @@ public class Application {
 			e.printStackTrace();
 		}
 
+
+
+
 	}
 
 	private void loadContentInfoPanel(String username) {
@@ -1769,7 +1797,12 @@ public class Application {
 					try {
 						String CName = Cname.getText();
 						String CUrl = Curl.getText();
-
+						if(CName.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Action failed. You must enter a Name ");
+							frame.getContentPane().removeAll();
+							loadContentInfoPanel(username);
+							frame.repaint();
+						}else{
 						Connection con = DatabaseConnection.getConnection();
 						String qc = " {? = call dbo.createContent(?,?,?)}";
 						CallableStatement psc;
@@ -1784,6 +1817,7 @@ public class Application {
 							JOptionPane.showMessageDialog(frame, "Create content successfully");
 						} else {
 							JOptionPane.showMessageDialog(frame, "something wrong");
+						}
 						}
 					} catch (SQLException e1) {
 						JOptionPane.showMessageDialog(frame, "something wrong");
@@ -1813,7 +1847,6 @@ public class Application {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						String Cid = Contentid.getText();
-
 						Connection con = DatabaseConnection.getConnection();
 						String qc = " {? = call dbo.deleteContent(?)}";
 						CallableStatement psc;
@@ -1825,11 +1858,10 @@ public class Application {
 						if (sub == 0) {
 							JOptionPane.showMessageDialog(frame, "Delete content successfully");
 						} else {
-							JOptionPane.showMessageDialog(frame, "something wrong");
+							JOptionPane.showMessageDialog(frame, "Action failed. Invalid ContentID");
 						}
 					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(frame, "something wrong");
-						e1.printStackTrace();
+						JOptionPane.showMessageDialog(frame, "Action failed. ContentID must be an integer");
 					}
 					frame.getContentPane().removeAll();
 					loadContentInfoPanel(username);
@@ -1867,6 +1899,11 @@ public class Application {
 						String id = contentID.getText();
 						String nName = newName.getText();
 						String nUrl = newUrl.getText();
+						if(id.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Action failed. You must enter a ID");
+						}else if(nName.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Action failed. You must enter a Name");
+						}else{
 						Connection con = DatabaseConnection.getConnection();
 						String qc = " {? = call dbo.editContent(?,?,?)}";
 						CallableStatement psc;
@@ -1880,11 +1917,11 @@ public class Application {
 						if (sub == 0) {
 							JOptionPane.showMessageDialog(frame, "Edit content successfully");
 						} else {
-							JOptionPane.showMessageDialog(frame, "something wrong");
+							JOptionPane.showMessageDialog(frame, "Action failed. Content not found");
+						}
 						}
 					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(frame, "something wrong");
-						e1.printStackTrace();
+						JOptionPane.showMessageDialog(frame, "ContentId must be an integer");
 					}
 					frame.getContentPane().removeAll();
 					loadContentInfoPanel(username);
