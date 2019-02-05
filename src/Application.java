@@ -364,8 +364,9 @@ public class Application {
 							JOptionPane.showMessageDialog(frame, "Video doesn't exist");
 							return;
 						}
-					} catch (SQLException e1) {
-						e1.printStackTrace();
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Input must be integer");
+						return;	
 					}
 					frame.getContentPane().removeAll();
 					loadVideoPanel(new Integer(userInput.getText()));
@@ -398,8 +399,9 @@ public class Application {
 							JOptionPane.showMessageDialog(frame, "Content doesn't exist");
 							return;
 						}
-					} catch (SQLException e1) {
-						e1.printStackTrace();
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Input must be integer");
+						return;	
 					}
 					frame.getContentPane().removeAll();
 					loadContentPanel(new Integer(ContentInput.getText()));
@@ -803,8 +805,9 @@ public class Application {
 						JOptionPane.showMessageDialog(frame, "Video doesn't exist");
 						return;
 					}
-				} catch (SQLException e1) {
-					e1.printStackTrace();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Input must be integer");
+					return;	
 				}
 				frame.getContentPane().removeAll();
 				loadVideoPanel(new Integer(userInput.getText()));
@@ -892,9 +895,9 @@ public class Application {
 						JOptionPane.showMessageDialog(frame, "Content doesn't exist");
 						return;
 					}
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Input must be integer");
+					return;					}
 				frame.getContentPane().removeAll();
 				loadContentPanel(new Integer(ContentInput.getText()));
 				frame.repaint();
@@ -1251,8 +1254,9 @@ public class Application {
 						JOptionPane.showMessageDialog(frame, "Video doesn't exist");
 						return;
 					}
-				} catch (SQLException e1) {
-					e1.printStackTrace();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Input must be integer");
+					return;	
 				}
 				frame.getContentPane().removeAll();
 				loadVideoPanel(new Integer(userInput.getText()));
@@ -1344,7 +1348,7 @@ public class Application {
 			e1.printStackTrace();
 		}
 		// subscribe button
-		btnSubscribe = new JButton("Subscribe");
+		btnSubscribe = new JButton("Subscribe / UnSubsribe");
 		btnSubscribe.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -1371,7 +1375,7 @@ public class Application {
 				frame.repaint();
 			}
 		});
-		btnSubscribe.setBounds(380, 292, 108, 30);
+		btnSubscribe.setBounds(380, 292, 208, 30);
 		panel.add(btnSubscribe);
 
 		lblNewLabel_1 = new JLabel("Subscribe# = ");
@@ -1996,8 +2000,9 @@ public class Application {
 						JOptionPane.showMessageDialog(frame, "Video doesn't exist");
 						return;
 					}
-				} catch (SQLException e1) {
-					e1.printStackTrace();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Input must be integer");
+					return;	
 				}
 				frame.getContentPane().removeAll();
 				loadVideoPanel(new Integer(userInput.getText()));
