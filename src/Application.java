@@ -125,7 +125,7 @@ public class Application {
 	}
 
 	private void setUp() {
-		File file = new File("Video_DB/src/setting");
+		File file = new File("src/setting");
 		Scanner scanner = null;
 		try {
 			scanner = new Scanner(file);

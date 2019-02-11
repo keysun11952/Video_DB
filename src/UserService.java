@@ -26,10 +26,10 @@ public class UserService {
 	private UserService(DatabaseConnection dbService) {
 		this.dbService = dbService;
 	}
-	
+
 	public static UserService getInstance() {
-		if(us==null) {
-			us=new UserService(DatabaseConnection.getInstance());
+		if (us == null) {
+			us = new UserService(DatabaseConnection.getInstance());
 		}
 		return us;
 	}
@@ -37,7 +37,7 @@ public class UserService {
 	public boolean useApplicationLogins() {
 		return false;
 	}
-	
+
 	public boolean login(String username, String password) {
 		try {
 			String saltquery = "Select PassSalt FROM [User] where Username = ?";
@@ -46,28 +46,31 @@ public class UserService {
 			ResultSet saltre = saltstmt.executeQuery();
 			saltre.next();
 			byte[] salt = saltre.getBytes(1);
-		
-			String hashquery =  "Select PassHash FROM [User] where Username = ?";
+
+			String hashquery = "Select PassHash FROM [User] where Username = ?";
 			PreparedStatement hashstmt = this.dbService.getConnection().prepareStatement(hashquery);
 			hashstmt.setString(1, username);
 			ResultSet hashre = hashstmt.executeQuery();
 			hashre.next();
 			String hash = hashre.getString(1);
-		
+
 			String result = this.hashPassword(salt, password);
-			if(result.equals(hash)){
+			if (result.equals(hash)) {
 				return true;
 			} else {
-				JOptionPane.showMessageDialog(null,"Login Failed");
+				JOptionPane.showMessageDialog(null, "Login Failed");
 				return false;
 			}
-		} catch (SQLException e) {return false;}
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Login Failed");
+			return false;
+		}
 	}
 
 	public boolean register(String username, String password, String dob, String email) {
-		//DONE: Task 6
+		// DONE: Task 6
 		try {
-			if(password.isEmpty() || username.isEmpty()) {
+			if (password.isEmpty() || username.isEmpty()) {
 				JOptionPane.showMessageDialog(null, "Username or password can not be empty");
 				return false;
 			}
@@ -82,22 +85,24 @@ public class UserService {
 			register.setString(6, email);
 			register.registerOutParameter(1, Types.INTEGER);
 			register.execute();
-		
+
 			int returnValue = register.getInt(1);
-			if(returnValue != 0){
+			if (returnValue != 0) {
 				JOptionPane.showMessageDialog(null, "Registration Failed");
 				return false;
 			}
 			return true;
-		} catch (SQLException e) {return false;}
+		} catch (SQLException e) {
+			return false;
+		}
 	}
-	
+
 	public byte[] getNewSalt() {
 		byte[] salt = new byte[16];
 		RANDOM.nextBytes(salt);
 		return salt;
 	}
-	
+
 	public String getStringFromBytes(byte[] data) {
 		return enc.encodeToString(data);
 	}
