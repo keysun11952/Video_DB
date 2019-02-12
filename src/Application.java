@@ -930,6 +930,15 @@ public class Application {
 		ContentInfoTable.setBounds(0, 70, 642, 37);
 		panel.add(ContentInfoTable);
 		try {
+			String q = "{Call dbo.watchVideo(?,?)}";
+			PreparedStatement ps = conn.prepareStatement(q);
+			ps.setInt(1, uid);
+			ps.setInt(2, vid);
+			ps.execute();
+		} catch (SQLException e1) {
+//			e1.printStackTrace();
+		}
+		try {
 			String q = "Select * from dbo.getVideoInfo(?)";
 			PreparedStatement ps = conn.prepareStatement(q);
 			ps.setInt(1, vid);
