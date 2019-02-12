@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import java.awt.Font;
+import javax.swing.JTabbedPane;
 
 public class Application {
 
@@ -96,6 +97,7 @@ public class Application {
 	private JTextField newVideoUrl;
 	private JLabel lblContentDetail;
 	private JTextField txtTag;
+	private JTable videostable;
 
 	/**
 	 * Launch the application.
@@ -1344,7 +1346,7 @@ public class Application {
 		}
 		// show tags
 		TagTable = new JTable();
-		TagTable.setBounds(78, 191, 193, 199);
+		TagTable.setBounds(12, 191, 154, 199);
 		panel.add(TagTable);
 		try {
 			String qc = "Select Tag from dbo.ContentTag Where ContentID = ?";
@@ -1395,6 +1397,20 @@ public class Application {
 		lblContentDetail.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblContentDetail.setBounds(78, 38, 154, 30);
 		panel.add(lblContentDetail);
+		
+		videostable = new JTable();
+		videostable.setBounds(178, 191, 190, 193);
+		panel.add(videostable);
+		try {
+			String qc = "Select * from dbo.getVideoInContent(?)";
+			PreparedStatement psc = con.prepareStatement(qc);
+			psc.setInt(1, cid);
+			ResultSet rsc = psc.executeQuery();
+			videostable.setModel(DbUtils.resultSetToTableModel(rsc));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
 
 	}
 
