@@ -140,7 +140,7 @@ public class Application {
 	}
 
 	private void setUp() {
-		File file = new File("Video_DB/src/setting");
+		File file = new File("src/setting");
 		Scanner scanner = null;
 		try {
 			scanner = new Scanner(file);
@@ -1571,22 +1571,22 @@ public class Application {
 							frame.getContentPane().removeAll();
 							loadVideoInfoPanel(username);
 							frame.repaint();
-						}else{
-						Connection con = DatabaseConnection.getConnection();
-						String qc = " {? = call dbo.deleteVideo(?, ?)}";
-						CallableStatement psc;
-						psc = con.prepareCall(qc);
-						psc.registerOutParameter(1, java.sql.Types.INTEGER);
-						psc.setString(2, id);
-						psc.setInt(3, uid);
-						psc.execute();
-						int sub = psc.getInt(1);
-						if (sub == 0) {
-							JOptionPane.showMessageDialog(frame, "delete successfully");
-						} else if (sub == 0) {
-						} else if(sub == 1) {
-							JOptionPane.showMessageDialog(frame, "Video doesn't exists or doesn't belong to you ");
-						}
+						} else {
+							Connection con = DatabaseConnection.getConnection();
+							String qc = " {? = call dbo.deleteVideo(?, ?)}";
+							CallableStatement psc;
+							psc = con.prepareCall(qc);
+							psc.registerOutParameter(1, java.sql.Types.INTEGER);
+							psc.setString(2, id);
+							psc.setInt(3, uid);
+							psc.execute();
+							int sub = psc.getInt(1);
+							if (sub == 0) {
+								JOptionPane.showMessageDialog(frame, "delete successfully");
+							} else if (sub == 0) {
+							} else if (sub == 1) {
+								JOptionPane.showMessageDialog(frame, "Video doesn't exists or doesn't belong to you ");
+							}
 						}
 					} catch (SQLException e1) {
 						JOptionPane.showMessageDialog(frame, "Delete failed. VideoID must be an integer");
@@ -1694,7 +1694,8 @@ public class Application {
 							} else if (sub == 2) {
 								JOptionPane.showMessageDialog(frame, "Edit failed. Invalid category");
 							} else if (sub == 3) {
-								JOptionPane.showMessageDialog(frame, "Edit failed. Video doesn't exists or doesn't belong to you");
+								JOptionPane.showMessageDialog(frame,
+										"Edit failed. Video doesn't exists or doesn't belong to you");
 							}
 						}
 					} catch (SQLException e1) {
@@ -1930,7 +1931,8 @@ public class Application {
 							if (sub == 0) {
 								JOptionPane.showMessageDialog(frame, "Edit content successfully");
 							} else {
-								JOptionPane.showMessageDialog(frame, "Action failed. Content not found or doesn't belong to you");
+								JOptionPane.showMessageDialog(frame,
+										"Action failed. Content not found or doesn't belong to you");
 							}
 						}
 					} catch (SQLException e1) {
@@ -2015,30 +2017,30 @@ public class Application {
 			JLabel lblVideoId = new JLabel("Video ID");
 			lblVideoId.setBounds(202, 378, 76, 16);
 			ContentInfoPanel.add(lblVideoId);
-			
+
 			description = new JTextField();
 			description.setBounds(241, 205, 180, 25);
 			ContentInfoPanel.add(description);
 			description.setColumns(10);
-			
+
 			lblDescription = new JLabel("Description");
 			lblDescription.setBounds(289, 183, 116, 16);
 			ContentInfoPanel.add(lblDescription);
-			
+
 			OnAir = new JTextField();
 			OnAir.setBounds(278, 249, 92, 22);
 			ContentInfoPanel.add(OnAir);
 			OnAir.setColumns(10);
-			
+
 			lblOnAir = new JLabel("On Air");
 			lblOnAir.setBounds(297, 233, 56, 16);
 			ContentInfoPanel.add(lblOnAir);
-			
+
 			btnCreate = new JButton("Create LiveStream");
 			btnCreate.setFont(new Font("Tahoma", Font.BOLD, 13));
 			btnCreate.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					
+
 					try {
 						String CName = Cname.getText();
 						String CUrl = Curl.getText();
@@ -2048,12 +2050,12 @@ public class Application {
 							frame.getContentPane().removeAll();
 							loadContentInfoPanel(username);
 							frame.repaint();
-						} else if(!air.equals("0") && !air.equals("1")){
+						} else if (!air.equals("0") && !air.equals("1")) {
 							JOptionPane.showMessageDialog(frame, "Action failed. You must enter 0 or 1 in OnAir");
 							frame.getContentPane().removeAll();
 							loadContentInfoPanel(username);
 							frame.repaint();
-						}else{
+						} else {
 							Connection con = DatabaseConnection.getConnection();
 							String qc = " {? = call dbo.createLiveStream(?,?,?,?)}";
 							CallableStatement psc;
@@ -2067,7 +2069,7 @@ public class Application {
 							int sub = psc.getInt(1);
 							if (sub == 0) {
 								JOptionPane.showMessageDialog(frame, "Create LiveStream successfully");
-							} else if(sub ==1) {
+							} else if (sub == 1) {
 								JOptionPane.showMessageDialog(frame, "OnAir cannot be null");
 							}
 						}
@@ -2077,40 +2079,39 @@ public class Application {
 					frame.getContentPane().removeAll();
 					loadContentInfoPanel(username);
 					frame.repaint();
-					
-					
+
 				}
 			});
 			btnCreate.setBounds(454, 248, 155, 25);
 			ContentInfoPanel.add(btnCreate);
-			
+
 			company = new JTextField();
 			company.setBounds(220, 295, 67, 22);
 			ContentInfoPanel.add(company);
 			company.setColumns(10);
-			
+
 			Finished = new JTextField();
 			Finished.setBounds(295, 295, 76, 22);
 			ContentInfoPanel.add(Finished);
 			Finished.setColumns(10);
-			
+
 			Category_1 = new JTextField();
 			Category_1.setBounds(382, 295, 59, 22);
 			ContentInfoPanel.add(Category_1);
 			Category_1.setColumns(10);
-			
+
 			lblNewLabel_26 = new JLabel("Company");
 			lblNewLabel_26.setBounds(230, 275, 56, 16);
 			ContentInfoPanel.add(lblNewLabel_26);
-			
+
 			lblNewLabel_27 = new JLabel("Finished");
 			lblNewLabel_27.setBounds(310, 275, 56, 16);
 			ContentInfoPanel.add(lblNewLabel_27);
-			
+
 			lblNewLabel_28 = new JLabel("Category");
 			lblNewLabel_28.setBounds(382, 275, 56, 16);
 			ContentInfoPanel.add(lblNewLabel_28);
-			
+
 			btnCreateTvSeries = new JButton("Create TVseries");
 			btnCreateTvSeries.setFont(new Font("Tahoma", Font.BOLD, 13));
 			btnCreateTvSeries.addActionListener(new ActionListener() {
@@ -2126,22 +2127,22 @@ public class Application {
 							frame.getContentPane().removeAll();
 							loadContentInfoPanel(username);
 							frame.repaint();
-						}else if(!finished.equals("0") && !finished.equals("1")){
-								JOptionPane.showMessageDialog(frame, "Action failed. You must enter 0 or 1 on finished");
-								frame.getContentPane().removeAll();
-								loadContentInfoPanel(username);
-								frame.repaint();
-						} else if(finished.isEmpty()){
+						} else if (!finished.equals("0") && !finished.equals("1")) {
+							JOptionPane.showMessageDialog(frame, "Action failed. You must enter 0 or 1 on finished");
+							frame.getContentPane().removeAll();
+							loadContentInfoPanel(username);
+							frame.repaint();
+						} else if (finished.isEmpty()) {
 							JOptionPane.showMessageDialog(frame, "Action failed. Finished cannot be null");
 							frame.getContentPane().removeAll();
 							loadContentInfoPanel(username);
 							frame.repaint();
-						}else if(category1.isEmpty()){
+						} else if (category1.isEmpty()) {
 							JOptionPane.showMessageDialog(frame, "Action failed. Category cannot be null");
 							frame.getContentPane().removeAll();
 							loadContentInfoPanel(username);
 							frame.repaint();
-						}else{
+						} else {
 							Connection con = DatabaseConnection.getConnection();
 							String qc = " {? = call dbo.createTVSeries(?,?,?,?,?,?)}";
 							CallableStatement psc;
@@ -2150,16 +2151,16 @@ public class Application {
 							psc.setString(2, Company);
 							psc.setString(3, finished);
 							psc.setString(4, category1);
-							psc.setString(5, CName );
+							psc.setString(5, CName);
 							psc.setString(6, CUrl);
 							psc.setInt(7, uid);
 							psc.execute();
 							int sub = psc.getInt(1);
 							if (sub == 0) {
 								JOptionPane.showMessageDialog(frame, "Create TVseries successfully");
-							} else if(sub ==1){
+							} else if (sub == 1) {
 								JOptionPane.showMessageDialog(frame, "Finished cannot be null");
-							}else if(sub == 2){
+							} else if (sub == 2) {
 								JOptionPane.showMessageDialog(frame, "Category not found. Failed to create TVseries");
 							}
 						}
@@ -2173,11 +2174,11 @@ public class Application {
 			});
 			btnCreateTvSeries.setBounds(454, 294, 155, 25);
 			ContentInfoPanel.add(btnCreateTvSeries);
-			
+
 			label = new JLabel("\u2014\u2014\u2014\u2014\u2014\u2014>");
 			label.setBounds(138, 252, 104, 16);
 			ContentInfoPanel.add(label);
-			
+
 			lblChooseType = new JLabel("Choose Type");
 			lblChooseType.setBounds(138, 228, 97, 16);
 			ContentInfoPanel.add(lblChooseType);
@@ -2304,7 +2305,7 @@ public class Application {
 		// loadMainPanel();
 		// loadUserInfoPanel();
 		// loadVideoInfoPanel(username);
-		//loadContentInfoPanel(username);
+		// loadContentInfoPanel(username);
 		// loadSearchPanel();
 
 		// ResultSet rs = null;
