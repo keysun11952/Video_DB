@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import java.awt.Font;
+import java.awt.Color;
 
 public class Application {
 
@@ -79,9 +80,6 @@ public class Application {
 	private JTextField Cname;
 	private JTextField Curl;
 	private JButton btnCreateContent;
-	private JLabel lblContentId;
-	private JTextField Contentid;
-	private JButton btnDeleteContent;
 	private JLabel lblNewLabel_5;
 	private JLabel lblNewContentName;
 	private JTextField newUrl;
@@ -99,6 +97,20 @@ public class Application {
 	private JTable videostable;
 	private JTextField AddedContent;
 	private JTextField AddedVideo;
+	private JTextField description;
+	private JLabel lblDescription;
+	private JTextField OnAir;
+	private JLabel lblOnAir;
+	private JButton btnCreate;
+	private JTextField company;
+	private JTextField Finished;
+	private JTextField Category_1;
+	private JLabel lblNewLabel_26;
+	private JLabel lblNewLabel_27;
+	private JLabel lblNewLabel_28;
+	private JButton btnCreateTvSeries;
+	private JLabel label;
+	private JLabel lblChooseType;
 
 	/**
 	 * Launch the application.
@@ -1771,7 +1783,7 @@ public class Application {
 		ContentInfoPanel.setLayout(null);
 
 		PersonalContent = new JTable();
-		PersonalContent.setBounds(59, 67, 520, 144);
+		PersonalContent.setBounds(59, 62, 520, 99);
 		ContentInfoPanel.add(PersonalContent);
 
 		ResultSet rs = null;
@@ -1803,30 +1815,31 @@ public class Application {
 			ContentInfoPanel.add(Back);
 
 			lblContentname = new JLabel("Content Name");
-			lblContentname.setBounds(49, 220, 102, 16);
+			lblContentname.setBounds(26, 205, 102, 16);
 			ContentInfoPanel.add(lblContentname);
 
 			lblContentUrl = new JLabel("Content URL");
-			lblContentUrl.setBounds(185, 220, 118, 16);
+			lblContentUrl.setBounds(26, 250, 118, 16);
 			ContentInfoPanel.add(lblContentUrl);
 
 			Cname = new JTextField();
-			Cname.setBounds(49, 240, 116, 22);
+			Cname.setBounds(24, 225, 85, 22);
 			ContentInfoPanel.add(Cname);
 			Cname.setColumns(10);
 
 			Curl = new JTextField();
-			Curl.setBounds(185, 240, 116, 22);
+			Curl.setBounds(26, 270, 76, 22);
 			ContentInfoPanel.add(Curl);
 			Curl.setColumns(10);
 
-			btnCreateContent = new JButton("Create Content");
+			btnCreateContent = new JButton("Create Channel");
 			btnCreateContent.setFont(new Font("Tahoma", Font.BOLD, 13));
 			btnCreateContent.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						String CName = Cname.getText();
 						String CUrl = Curl.getText();
+						String des = description.getText();
 						if (CName.isEmpty()) {
 							JOptionPane.showMessageDialog(frame, "Action failed. You must enter a Name ");
 							frame.getContentPane().removeAll();
@@ -1834,13 +1847,14 @@ public class Application {
 							frame.repaint();
 						} else {
 							Connection con = DatabaseConnection.getConnection();
-							String qc = " {? = call dbo.createContent(?,?,?)}";
+							String qc = " {? = call dbo.createChannel(?,?,?,?)}";
 							CallableStatement psc;
 							psc = con.prepareCall(qc);
 							psc.registerOutParameter(1, java.sql.Types.INTEGER);
 							psc.setString(2, CName);
-							psc.setString(3, CUrl);
-							psc.setInt(4, uid);
+							psc.setString(3, des);
+							psc.setString(4, CUrl);
+							psc.setInt(5, uid);
 							psc.execute();
 							int sub = psc.getInt(1);
 							if (sub == 0) {
@@ -1859,64 +1873,24 @@ public class Application {
 
 				}
 			});
-			btnCreateContent.setBounds(386, 240, 155, 25);
+			btnCreateContent.setBounds(454, 205, 155, 25);
 			ContentInfoPanel.add(btnCreateContent);
 
-			lblContentId = new JLabel(" Content ID");
-			lblContentId.setBounds(49, 320, 79, 16);
-			ContentInfoPanel.add(lblContentId);
-
-			Contentid = new JTextField();
-			Contentid.setBounds(49, 338, 116, 22);
-			ContentInfoPanel.add(Contentid);
-			Contentid.setColumns(10);
-
-			btnDeleteContent = new JButton("Delete Content");
-			btnDeleteContent.setFont(new Font("Tahoma", Font.BOLD, 13));
-			btnDeleteContent.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					try {
-						String Cid = Contentid.getText();
-						Connection con = DatabaseConnection.getConnection();
-						String qc = " {? = call dbo.deleteContent(?)}";
-						CallableStatement psc;
-						psc = con.prepareCall(qc);
-						psc.registerOutParameter(1, java.sql.Types.INTEGER);
-						psc.setString(2, Cid);
-						psc.execute();
-						int sub = psc.getInt(1);
-						if (sub == 0) {
-							JOptionPane.showMessageDialog(frame, "Delete content successfully");
-						} else {
-							JOptionPane.showMessageDialog(frame, "Action failed. Invalid ContentID");
-						}
-					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(frame, "Action failed. ContentID must be an integer");
-					}
-					frame.getContentPane().removeAll();
-					loadContentInfoPanel(username);
-					frame.repaint();
-
-				}
-			});
-			btnDeleteContent.setBounds(177, 337, 155, 25);
-			ContentInfoPanel.add(btnDeleteContent);
-
 			lblNewLabel_5 = new JLabel("  New URL");
-			lblNewLabel_5.setBounds(254, 270, 118, 16);
+			lblNewLabel_5.setBounds(263, 334, 118, 16);
 			ContentInfoPanel.add(lblNewLabel_5);
 
 			lblNewContentName = new JLabel("New Content Name");
-			lblNewContentName.setBounds(130, 270, 114, 16);
+			lblNewContentName.setBounds(128, 334, 114, 16);
 			ContentInfoPanel.add(lblNewContentName);
 
 			newUrl = new JTextField();
-			newUrl.setBounds(256, 290, 116, 22);
+			newUrl.setBounds(254, 354, 116, 22);
 			ContentInfoPanel.add(newUrl);
 			newUrl.setColumns(10);
 
 			newName = new JTextField();
-			newName.setBounds(128, 290, 116, 22);
+			newName.setBounds(128, 354, 116, 22);
 			ContentInfoPanel.add(newName);
 			newName.setColumns(10);
 
@@ -1958,29 +1932,29 @@ public class Application {
 					frame.repaint();
 				}
 			});
-			btnNewButton_4.setBounds(387, 290, 154, 25);
+			btnNewButton_4.setBounds(382, 352, 154, 25);
 			ContentInfoPanel.add(btnNewButton_4);
 
 			contentID = new JTextField();
-			contentID.setBounds(49, 290, 67, 22);
+			contentID.setBounds(49, 354, 67, 22);
 			ContentInfoPanel.add(contentID);
 			contentID.setColumns(10);
 
 			lblNewLabel_6 = new JLabel(" Content ID");
-			lblNewLabel_6.setBounds(49, 270, 69, 16);
+			lblNewLabel_6.setBounds(47, 334, 69, 16);
 			ContentInfoPanel.add(lblNewLabel_6);
 
 			AddedContent = new JTextField();
-			AddedContent.setBounds(49, 389, 116, 22);
+			AddedContent.setBounds(49, 395, 116, 22);
 			ContentInfoPanel.add(AddedContent);
 			AddedContent.setColumns(10);
 
 			AddedVideo = new JTextField();
-			AddedVideo.setBounds(187, 389, 116, 22);
+			AddedVideo.setBounds(187, 395, 116, 22);
 			ContentInfoPanel.add(AddedVideo);
 			AddedVideo.setColumns(10);
 
-			JButton btnAddVideo = new JButton("Add Video");
+			JButton btnAddVideo = new JButton("Add Video In Table");
 			btnAddVideo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 
@@ -2022,16 +1996,182 @@ public class Application {
 				}
 			});
 			btnAddVideo.setFont(new Font("Tahoma", Font.BOLD, 13));
-			btnAddVideo.setBounds(351, 388, 140, 25);
+			btnAddVideo.setBounds(351, 393, 185, 25);
 			ContentInfoPanel.add(btnAddVideo);
 
 			JLabel lblContentId_1 = new JLabel("Content ID");
-			lblContentId_1.setBounds(59, 373, 69, 16);
+			lblContentId_1.setBounds(52, 378, 69, 16);
 			ContentInfoPanel.add(lblContentId_1);
 
 			JLabel lblVideoId = new JLabel("Video ID");
-			lblVideoId.setBounds(202, 373, 76, 16);
+			lblVideoId.setBounds(202, 378, 76, 16);
 			ContentInfoPanel.add(lblVideoId);
+			
+			description = new JTextField();
+			description.setBounds(241, 205, 180, 25);
+			ContentInfoPanel.add(description);
+			description.setColumns(10);
+			
+			lblDescription = new JLabel("Description");
+			lblDescription.setBounds(289, 183, 116, 16);
+			ContentInfoPanel.add(lblDescription);
+			
+			OnAir = new JTextField();
+			OnAir.setBounds(278, 249, 92, 22);
+			ContentInfoPanel.add(OnAir);
+			OnAir.setColumns(10);
+			
+			lblOnAir = new JLabel("On Air");
+			lblOnAir.setBounds(297, 233, 56, 16);
+			ContentInfoPanel.add(lblOnAir);
+			
+			btnCreate = new JButton("Create LiveStream");
+			btnCreate.setFont(new Font("Tahoma", Font.BOLD, 13));
+			btnCreate.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					
+					try {
+						String CName = Cname.getText();
+						String CUrl = Curl.getText();
+						String air = OnAir.getText();
+						if (CName.isEmpty()) {
+							JOptionPane.showMessageDialog(frame, "Action failed. You must enter a Name ");
+							frame.getContentPane().removeAll();
+							loadContentInfoPanel(username);
+							frame.repaint();
+						} else if(!air.equals("0") && !air.equals("1")){
+							JOptionPane.showMessageDialog(frame, "Action failed. You must enter 0 or 1 in OnAir");
+							frame.getContentPane().removeAll();
+							loadContentInfoPanel(username);
+							frame.repaint();
+						}else{
+							Connection con = DatabaseConnection.getConnection();
+							String qc = " {? = call dbo.createLiveStream(?,?,?,?)}";
+							CallableStatement psc;
+							psc = con.prepareCall(qc);
+							psc.registerOutParameter(1, java.sql.Types.INTEGER);
+							psc.setString(2, air);
+							psc.setString(3, CName);
+							psc.setString(4, CUrl);
+							psc.setInt(5, uid);
+							psc.execute();
+							int sub = psc.getInt(1);
+							if (sub == 0) {
+								JOptionPane.showMessageDialog(frame, "Create LiveStream successfully");
+							} else if(sub ==1) {
+								JOptionPane.showMessageDialog(frame, "OnAir cannot be null");
+							}
+						}
+					} catch (SQLException e1) {
+						JOptionPane.showMessageDialog(frame, "OnAir must be 0 or 1");
+					}
+					frame.getContentPane().removeAll();
+					loadContentInfoPanel(username);
+					frame.repaint();
+					
+					
+				}
+			});
+			btnCreate.setBounds(454, 248, 155, 25);
+			ContentInfoPanel.add(btnCreate);
+			
+			company = new JTextField();
+			company.setBounds(220, 295, 67, 22);
+			ContentInfoPanel.add(company);
+			company.setColumns(10);
+			
+			Finished = new JTextField();
+			Finished.setBounds(295, 295, 76, 22);
+			ContentInfoPanel.add(Finished);
+			Finished.setColumns(10);
+			
+			Category_1 = new JTextField();
+			Category_1.setBounds(382, 295, 59, 22);
+			ContentInfoPanel.add(Category_1);
+			Category_1.setColumns(10);
+			
+			lblNewLabel_26 = new JLabel("Company");
+			lblNewLabel_26.setBounds(230, 275, 56, 16);
+			ContentInfoPanel.add(lblNewLabel_26);
+			
+			lblNewLabel_27 = new JLabel("Finished");
+			lblNewLabel_27.setBounds(310, 275, 56, 16);
+			ContentInfoPanel.add(lblNewLabel_27);
+			
+			lblNewLabel_28 = new JLabel("Category");
+			lblNewLabel_28.setBounds(382, 275, 56, 16);
+			ContentInfoPanel.add(lblNewLabel_28);
+			
+			btnCreateTvSeries = new JButton("Create TVseries");
+			btnCreateTvSeries.setFont(new Font("Tahoma", Font.BOLD, 13));
+			btnCreateTvSeries.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						String CName = Cname.getText();
+						String CUrl = Curl.getText();
+						String Company = company.getText();
+						String finished = Finished.getText();
+						String category1 = Category_1.getText();
+						if (CName.isEmpty()) {
+							JOptionPane.showMessageDialog(frame, "Action failed. You must enter a Name ");
+							frame.getContentPane().removeAll();
+							loadContentInfoPanel(username);
+							frame.repaint();
+						}else if(!finished.equals("0") && !finished.equals("1")){
+								JOptionPane.showMessageDialog(frame, "Action failed. You must enter 0 or 1 on finished");
+								frame.getContentPane().removeAll();
+								loadContentInfoPanel(username);
+								frame.repaint();
+						} else if(finished.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Action failed. Finished cannot be null");
+							frame.getContentPane().removeAll();
+							loadContentInfoPanel(username);
+							frame.repaint();
+						}else if(category1.isEmpty()){
+							JOptionPane.showMessageDialog(frame, "Action failed. Category cannot be null");
+							frame.getContentPane().removeAll();
+							loadContentInfoPanel(username);
+							frame.repaint();
+						}else{
+							Connection con = DatabaseConnection.getConnection();
+							String qc = " {? = call dbo.createTVSeries(?,?,?,?,?,?)}";
+							CallableStatement psc;
+							psc = con.prepareCall(qc);
+							psc.registerOutParameter(1, java.sql.Types.INTEGER);
+							psc.setString(2, Company);
+							psc.setString(3, finished);
+							psc.setString(4, category1);
+							psc.setString(5, CName );
+							psc.setString(6, CUrl);
+							psc.setInt(7, uid);
+							psc.execute();
+							int sub = psc.getInt(1);
+							if (sub == 0) {
+								JOptionPane.showMessageDialog(frame, "Create TVseries successfully");
+							} else if(sub ==1){
+								JOptionPane.showMessageDialog(frame, "Finished cannot be null");
+							}else if(sub == 2){
+								JOptionPane.showMessageDialog(frame, "Category not found. Failed to create TVseries");
+							}
+						}
+					} catch (SQLException e1) {
+						JOptionPane.showMessageDialog(frame, "Category must be an integer");
+					}
+					frame.getContentPane().removeAll();
+					loadContentInfoPanel(username);
+					frame.repaint();
+				}
+			});
+			btnCreateTvSeries.setBounds(454, 294, 155, 25);
+			ContentInfoPanel.add(btnCreateTvSeries);
+			
+			label = new JLabel("\u2014\u2014\u2014\u2014\u2014\u2014>");
+			label.setBounds(138, 252, 104, 16);
+			ContentInfoPanel.add(label);
+			
+			lblChooseType = new JLabel("Choose Type");
+			lblChooseType.setBounds(138, 228, 97, 16);
+			ContentInfoPanel.add(lblChooseType);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -2155,7 +2295,7 @@ public class Application {
 		// loadMainPanel();
 		// loadUserInfoPanel();
 		// loadVideoInfoPanel(username);
-		// loadContentInfoPanel(username);
+		//loadContentInfoPanel(username);
 		// loadSearchPanel();
 
 		// ResultSet rs = null;
