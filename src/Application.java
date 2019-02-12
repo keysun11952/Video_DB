@@ -1566,23 +1566,30 @@ public class Application {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						String id = Videoid.getText();
+						if (id.isEmpty()) {
+							JOptionPane.showMessageDialog(frame, "Delete failed. You must enter a ID");
+							frame.getContentPane().removeAll();
+							loadVideoInfoPanel(username);
+							frame.repaint();
+						}else{
 						Connection con = DatabaseConnection.getConnection();
-						String qc = " {? = call dbo.deleteVideo(?)}";
+						String qc = " {? = call dbo.deleteVideo(?, ?)}";
 						CallableStatement psc;
 						psc = con.prepareCall(qc);
 						psc.registerOutParameter(1, java.sql.Types.INTEGER);
 						psc.setString(2, id);
-
+						psc.setInt(3, uid);
 						psc.execute();
 						int sub = psc.getInt(1);
 						if (sub == 0) {
 							JOptionPane.showMessageDialog(frame, "delete successfully");
 						} else if (sub == 0) {
-						} else {
-							JOptionPane.showMessageDialog(frame, "VideoID cannot be found");
+						} else if(sub == 1) {
+							JOptionPane.showMessageDialog(frame, "Video doesn't exists or doesn't belong to you ");
+						}
 						}
 					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(frame, "Upload failed. VideoID must be an integer");
+						JOptionPane.showMessageDialog(frame, "Delete failed. VideoID must be an integer");
 					}
 					frame.getContentPane().removeAll();
 					loadVideoInfoPanel(username);
@@ -1670,15 +1677,16 @@ public class Application {
 							JOptionPane.showMessageDialog(frame, "Edit failed. You must enter a Category");
 						} else {
 							Connection con = DatabaseConnection.getConnection();
-							String qc = " {? = call dbo.editVideo(?,?,?,?,?)}";
+							String qc = " {? = call dbo.editVideo(?,?,?,?,?,?)}";
 							CallableStatement psc;
 							psc = con.prepareCall(qc);
 							psc.registerOutParameter(1, java.sql.Types.INTEGER);
 							psc.setString(2, newID);
-							psc.setString(3, newName);
-							psc.setString(4, newLength);
-							psc.setString(5, newCategory);
-							psc.setString(6, newUrl);
+							psc.setInt(3, uid);
+							psc.setString(4, newName);
+							psc.setString(5, newLength);
+							psc.setString(6, newCategory);
+							psc.setString(7, newUrl);
 							psc.execute();
 							int sub = psc.getInt(1);
 							if (sub == 0) {
@@ -1686,7 +1694,7 @@ public class Application {
 							} else if (sub == 2) {
 								JOptionPane.showMessageDialog(frame, "Edit failed. Invalid category");
 							} else if (sub == 3) {
-								JOptionPane.showMessageDialog(frame, "Edit failed. Video doesn't exists");
+								JOptionPane.showMessageDialog(frame, "Edit failed. Video doesn't exists or doesn't belong to you");
 							}
 						}
 					} catch (SQLException e1) {
@@ -1909,19 +1917,20 @@ public class Application {
 							JOptionPane.showMessageDialog(frame, "Action failed. You must enter a Name");
 						} else {
 							Connection con = DatabaseConnection.getConnection();
-							String qc = " {? = call dbo.editContent(?,?,?)}";
+							String qc = " {? = call dbo.editContent(?,?,?,?)}";
 							CallableStatement psc;
 							psc = con.prepareCall(qc);
 							psc.registerOutParameter(1, java.sql.Types.INTEGER);
 							psc.setString(2, id);
-							psc.setString(3, nName);
-							psc.setString(4, nUrl);
+							psc.setInt(3, uid);
+							psc.setString(4, nName);
+							psc.setString(5, nUrl);
 							psc.execute();
 							int sub = psc.getInt(1);
 							if (sub == 0) {
 								JOptionPane.showMessageDialog(frame, "Edit content successfully");
 							} else {
-								JOptionPane.showMessageDialog(frame, "Action failed. Content not found");
+								JOptionPane.showMessageDialog(frame, "Action failed. Content not found or doesn't belong to you");
 							}
 						}
 					} catch (SQLException e1) {
