@@ -1965,7 +1965,7 @@ public class Application {
 			ContentInfoPanel.add(AddedVideo);
 			AddedVideo.setColumns(10);
 
-			JButton btnAddVideo = new JButton("Add Video In Table");
+			JButton btnAddVideo = new JButton("Add Video In Content");
 			btnAddVideo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 
@@ -1979,20 +1979,21 @@ public class Application {
 							JOptionPane.showMessageDialog(frame, "Action failed. You must enter a VideoID");
 						} else {
 							Connection con = DatabaseConnection.getConnection();
-							String qc = " {? = call dbo.includeVideo(?,?)}";
+							String qc = " {? = call dbo.includeVideo(?,?,?)}";
 							CallableStatement psc;
 							psc = con.prepareCall(qc);
 							psc.registerOutParameter(1, java.sql.Types.INTEGER);
 							psc.setString(2, addedContent);
 							psc.setString(3, addedVideo);
+							psc.setInt(4, uid);
 							psc.execute();
 							int sub = psc.getInt(1);
 							if (sub == 0) {
 								JOptionPane.showMessageDialog(frame, "Video added successfully");
 							} else if (sub == 1) {
-								JOptionPane.showMessageDialog(frame, "Content not found");
+								JOptionPane.showMessageDialog(frame, "Content not found or doesn't belong to you");
 							} else if (sub == 2) {
-								JOptionPane.showMessageDialog(frame, "Video not found");
+								JOptionPane.showMessageDialog(frame, "Video not found or doesn't belong to you");
 							} else if (sub == 3) {
 								JOptionPane.showMessageDialog(frame, "Video already exists in content");
 							}
@@ -2305,7 +2306,7 @@ public class Application {
 		// loadMainPanel();
 		// loadUserInfoPanel();
 		// loadVideoInfoPanel(username);
-		// loadContentInfoPanel(username);
+		//loadContentInfoPanel(username);
 		// loadSearchPanel();
 
 		// ResultSet rs = null;
