@@ -485,32 +485,36 @@ public class Application {
 		btnChangePassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String newpass = JOptionPane.showInputDialog(frame, "Enter new password: ");
-					if (newpass.isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Password can not be empty");
-						return;
-					}
-					byte[] salt = us.getNewSalt();
-					String hash = us.hashPassword(salt, newpass);
-					Connection con = DatabaseConnection.getConnection();
-					CallableStatement change = con.prepareCall("{? = call changePass(?,?,?)}");
-					change.setString(2, username);
-					change.setBytes(3, salt);
-					change.setString(4, hash);
-					change.registerOutParameter(1, Types.INTEGER);
-					change.execute();
-					int returnValue = change.getInt(1);
-					if (returnValue != 0)
+					try {
+						String newpass = JOptionPane.showInputDialog(frame, "Enter new password: ");
+						if (newpass.isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Password can not be empty");
+							return;
+						}
+						byte[] salt = us.getNewSalt();
+						String hash = us.hashPassword(salt, newpass);
+						Connection con = DatabaseConnection.getConnection();
+						CallableStatement change = con.prepareCall("{? = call changePass(?,?,?)}");
+						change.setString(2, username);
+						change.setBytes(3, salt);
+						change.setString(4, hash);
+						change.registerOutParameter(1, Types.INTEGER);
+						change.execute();
+						int returnValue = change.getInt(1);
+						if (returnValue != 0)
+							JOptionPane.showMessageDialog(null, "Can not change password");
+						else {
+							JOptionPane.showMessageDialog(null, "Password Changed");
+							username = null;
+							frame.getContentPane().removeAll();
+							loadLoginPanel();
+							frame.repaint();
+						}
+					} catch (SQLException e1) {
 						JOptionPane.showMessageDialog(null, "Can not change password");
-					else {
-						JOptionPane.showMessageDialog(null, "Password Changed");
-						username = null;
-						frame.getContentPane().removeAll();
-						loadLoginPanel();
-						frame.repaint();
 					}
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "Can not change password");
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Password not changed");
 				}
 			}
 		});
@@ -521,27 +525,31 @@ public class Application {
 		btnChangeBirthday.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String newdob = JOptionPane.showInputDialog(frame, "Enter new birthday: ");
-					if (newdob.isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Birthday can not be empty");
-						return;
+					try {
+						String newdob = JOptionPane.showInputDialog(frame, "Enter new birthday: ");
+						if (newdob.isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Birthday can not be empty");
+							return;
+						}
+						Connection con = DatabaseConnection.getConnection();
+						CallableStatement change = con.prepareCall("{? = call changeDOB(?,?)}");
+						change.setString(2, username);
+						change.setString(3, newdob);
+						change.registerOutParameter(1, Types.INTEGER);
+						change.execute();
+						int returnValue = change.getInt(1);
+						if (returnValue != 0)
+							JOptionPane.showMessageDialog(null, "Can not change birthday");
+						else
+							JOptionPane.showMessageDialog(null, "Birthday Changed");
+						frame.getContentPane().removeAll();
+						loadUserInfoPanel();
+						frame.repaint();
+					} catch (SQLException e1) {
+						JOptionPane.showMessageDialog(null, "Birthday not in valid format");
 					}
-					Connection con = DatabaseConnection.getConnection();
-					CallableStatement change = con.prepareCall("{? = call changeDOB(?,?)}");
-					change.setString(2, username);
-					change.setString(3, newdob);
-					change.registerOutParameter(1, Types.INTEGER);
-					change.execute();
-					int returnValue = change.getInt(1);
-					if (returnValue != 0)
-						JOptionPane.showMessageDialog(null, "Can not change birthday");
-					else
-						JOptionPane.showMessageDialog(null, "Birthday Changed");
-					frame.getContentPane().removeAll();
-					loadUserInfoPanel();
-					frame.repaint();
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "Birthday not in valid format");
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Birthday not changed");
 				}
 			}
 		});
@@ -552,27 +560,31 @@ public class Application {
 		btnChangeEmail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String newemail = JOptionPane.showInputDialog(frame, "Enter new email: ");
-					if (newemail.isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Email can not be empty");
-						return;
+					try {
+						String newemail = JOptionPane.showInputDialog(frame, "Enter new email: ");
+						if (newemail.isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Email can not be empty");
+							return;
+						}
+						Connection con = DatabaseConnection.getConnection();
+						CallableStatement change = con.prepareCall("{? = call changeEmail(?,?)}");
+						change.setString(2, username);
+						change.setString(3, newemail);
+						change.registerOutParameter(1, Types.INTEGER);
+						change.execute();
+						int returnValue = change.getInt(1);
+						if (returnValue != 0)
+							JOptionPane.showMessageDialog(null, "Can not change email");
+						else
+							JOptionPane.showMessageDialog(null, "Email Changed");
+						frame.getContentPane().removeAll();
+						loadUserInfoPanel();
+						frame.repaint();
+					} catch (SQLException e1) {
+						JOptionPane.showMessageDialog(null, "Email already exist");
 					}
-					Connection con = DatabaseConnection.getConnection();
-					CallableStatement change = con.prepareCall("{? = call changeEmail(?,?)}");
-					change.setString(2, username);
-					change.setString(3, newemail);
-					change.registerOutParameter(1, Types.INTEGER);
-					change.execute();
-					int returnValue = change.getInt(1);
-					if (returnValue != 0)
-						JOptionPane.showMessageDialog(null, "Can not change email");
-					else
-						JOptionPane.showMessageDialog(null, "Email Changed");
-					frame.getContentPane().removeAll();
-					loadUserInfoPanel();
-					frame.repaint();
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "Email already exist");
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Email not changed");
 				}
 			}
 		});
@@ -2306,7 +2318,7 @@ public class Application {
 		// loadMainPanel();
 		// loadUserInfoPanel();
 		// loadVideoInfoPanel(username);
-		//loadContentInfoPanel(username);
+		// loadContentInfoPanel(username);
 		// loadSearchPanel();
 
 		// ResultSet rs = null;
